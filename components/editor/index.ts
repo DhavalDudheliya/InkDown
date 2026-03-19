@@ -1,1 +1,5 @@
 export { EditorPage } from "./editor-page"
+export { MarkdownEditor } from "./markdown-editor"
+export { EditorToolbar } from "./editor-toolbar"
+export { EditorStatusBar } from "./editor-status-bar"
+export { FileImportDialog } from "./file-import-dialog"
