@@ -24,8 +24,42 @@ export function ExportButton({ className }: ExportButtonProps) {
   const documentStructure = useStyleStore((s) => s.documentStructure)
   const specialContent = useStyleStore((s) => s.specialContent)
 
-  const handlePrint = () => {
-    window.print()
+  const handleExportPdf = async () => {
+    try {
+      // Dynamic import since html2pdf uses window object
+      const html2pdf = (await import("html2pdf.js")).default
+
+      const element = document.querySelector(".preview-content")
+      const wrapper = element?.parentElement
+
+      if (!wrapper) return
+
+      const opt = {
+        margin: 0,
+        filename: "inkdown-export.pdf",
+        image: { type: "jpeg" as const, quality: 0.98 },
+        html2canvas: { 
+          scale: 2, 
+          useCORS: true,
+          onclone: (document: Document) => {
+            // Remove the tailwind classes that use color-mix(in oklab...) which crashes html2canvas
+            const wrappers = document.querySelectorAll('.preview-page-wrapper');
+            wrappers.forEach(wrap => {
+              wrap.classList.remove("shadow-lg", "ring-1", "ring-black/5", "dark:bg-zinc-50");
+              wrap.classList.add("bg-white");
+              // Reset transform to ensure it is captured correctly at 100% scale
+              (wrap as HTMLElement).style.transform = "none";
+            });
+          }
+        },
+        jsPDF: { unit: "mm" as const, format: "a4" as const, orientation: "portrait" as const },
+      }
+
+      // Generate PDF
+      await html2pdf().set(opt).from(wrapper).save()
+    } catch (error) {
+      console.error("Failed to export PDF:", error)
+    }
   }
 
   const handleExportMarkdown = () => {
@@ -40,8 +74,9 @@ export function ExportButton({ className }: ExportButtonProps) {
 
   const handleExportHtml = async () => {
     // Generate the raw HTML output (without CSS for now, or we can fetch CSS)
-    const htmlOutput = await parseMarkdown(content, codeBlock.theme, documentStructure, specialContent)
+    const htmlOutput = await parseMarkdown(content, codeBlock, documentStructure, specialContent)
     
+    // Minimal HTML wrapper for code viewing... (keeping this identical for now)
     const fullHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,9 +112,9 @@ export function ExportButton({ className }: ExportButtonProps) {
         Export
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handlePrint}>
-          <Printer className="mr-2 h-4 w-4" />
-          Print / Save as PDF
+        <DropdownMenuItem onClick={handleExportPdf}>
+          <FileText className="mr-2 h-4 w-4" />
+          Save as PDF
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleExportHtml}>

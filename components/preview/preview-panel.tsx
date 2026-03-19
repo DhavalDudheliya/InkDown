@@ -37,13 +37,13 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
   // Parse markdown when content changes
   useEffect(() => {
     let cancelled = false
-    parseMarkdown(debouncedContent, codeBlock.theme, documentStructure, specialContent).then((result) => {
+    parseMarkdown(debouncedContent, codeBlock, documentStructure, specialContent).then((result) => {
       if (!cancelled) setHtml(result)
     })
     return () => {
       cancelled = true
     }
-  }, [debouncedContent, codeBlock.theme, documentStructure, specialContent])
+  }, [debouncedContent, codeBlock, documentStructure, specialContent])
 
   // Zoom handlers
   const handleZoomIn = useCallback(() => {
@@ -66,7 +66,7 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
   }, [])
 
   // Build inline styles based on store state
-  const previewStyles = buildPreviewStyles(fonts, colors, bodyText, headings, tableConfig)
+  const previewStyles = buildPreviewStyles(fonts, colors, bodyText, headings, tableConfig, codeBlock)
 
   return (
     <div className={cn("flex h-full flex-col print:h-auto print:overflow-visible", className)}>
@@ -113,7 +113,8 @@ function buildPreviewStyles(
   colors: ReturnType<typeof useStyleStore.getState>["colors"],
   bodyText: ReturnType<typeof useStyleStore.getState>["bodyText"],
   headings: ReturnType<typeof useStyleStore.getState>["headings"],
-  tableConfig: ReturnType<typeof useStyleStore.getState>["tableConfig"]
+  tableConfig: ReturnType<typeof useStyleStore.getState>["tableConfig"],
+  codeBlock: ReturnType<typeof useStyleStore.getState>["codeBlock"]
 ): string {
   const headingLevels = ["h1", "h2", "h3", "h4", "h5", "h6"] as const
 
@@ -182,19 +183,56 @@ function buildPreviewStyles(
       border-radius: 4px;
     }
 
+    .preview-content .code-block-container {
+      margin: 16px 0;
+      border-radius: ${codeBlock.borderRadius}px;
+      overflow: hidden;
+      ${codeBlock.border ? `border: 1px solid ${colors.inlineCodeTextColor}20;` : ""}
+    }
+
+    .preview-content .code-block-header {
+      background-color: ${colors.inlineCodeBackground};
+      color: ${colors.inlineCodeTextColor};
+      padding: 6px 16px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid ${colors.inlineCodeTextColor}20;
+      font-family: '${fonts.body.family}', sans-serif;
+    }
+
     .preview-content pre {
       background-color: ${colors.inlineCodeBackground};
-      border-radius: 8px;
-      padding: 16px;
-      margin: 16px 0;
+      border-radius: ${codeBlock.borderRadius}px;
+      padding: ${codeBlock.padding}px;
+      margin: ${codeBlock.fileNameLabel ? "0" : "16px 0"};
       overflow-x: auto;
+      ${codeBlock.wordWrap ? "white-space: pre-wrap; word-wrap: break-word;" : "white-space: pre;"}
+      ${codeBlock.border && !codeBlock.fileNameLabel ? `border: 1px solid ${colors.inlineCodeTextColor}20;` : ""}
     }
 
     .preview-content pre code {
       background: none;
       padding: 0;
-      font-size: ${fonts.monospace.size}px;
+      font-family: '${codeBlock.fontFamily === "default" ? fonts.monospace.family : codeBlock.fontFamily}', monospace;
+      font-size: ${codeBlock.fontSize}px;
       line-height: ${fonts.monospace.lineHeight};
+      display: grid;
+    }
+
+    .preview-content pre.has-line-numbers {
+      counter-reset: line;
+    }
+
+    .preview-content pre.has-line-numbers code .line::before {
+      counter-increment: line;
+      content: counter(line);
+      display: inline-block;
+      width: 2rem;
+      margin-right: 1.5rem;
+      text-align: right;
+      color: ${colors.inlineCodeTextColor}60;
     }
 
     .preview-content table {

@@ -6,6 +6,7 @@ import remarkRehype from "remark-rehype"
 import rehypeKatex from "rehype-katex"
 import rehypeSlug from "rehype-slug"
 import rehypeStringify from "rehype-stringify"
+import rehypeParse from "rehype-parse"
 import { visit } from "unist-util-visit"
 import type { Root, Element } from "hast"
 import type { Root as MdastRoot, Heading, Text, List, ListItem, Paragraph, PhrasingContent, Blockquote } from "mdast"
@@ -23,7 +24,7 @@ import type { DocumentStructureSettings, SpecialContentSettings } from "@/types/
  */
 export async function parseMarkdown(
   content: string,
-  codeTheme: string = "catppuccin-mocha",
+  codeBlockConfig?: any,
   docStruct?: DocumentStructureSettings,
   specialContent?: SpecialContentSettings
 ): Promise<string> {
@@ -37,7 +38,7 @@ export async function parseMarkdown(
     .use(rehypeImages, specialContent)
     .use(rehypeSlug)
     .use(rehypeKatex)
-    .use(rehypeShiki, { theme: codeTheme })
+    .use(rehypeShiki, { theme: codeBlockConfig?.theme || "catppuccin-mocha", codeBlock: codeBlockConfig })
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(content)
 
@@ -170,9 +171,9 @@ function extractMdastText(node: any): string {
 /**
  * Custom rehype plugin that runs Shiki on `<pre><code>` blocks.
  */
-function rehypeShiki(options: { theme: string }) {
+function rehypeShiki(options: { theme: string; codeBlock?: any }) {
   return async function (tree: Root) {
-    const nodesToProcess: { node: Element; parent: Element; index: number }[] =
+    const nodesToProcess: { node: Element; codeNode: Element; parent: Element; index: number }[] =
       []
 
     // Collect all <pre><code> nodes
@@ -185,7 +186,8 @@ function rehypeShiki(options: { theme: string }) {
       ) {
         if (parent && typeof index === "number") {
           nodesToProcess.push({
-            node: node.children[0] as Element,
+            node, // The <pre> element
+            codeNode: node.children[0] as Element, // The <code> element
             parent: parent as Element,
             index,
           })
@@ -194,9 +196,9 @@ function rehypeShiki(options: { theme: string }) {
     })
 
     // Process each code block with Shiki
-    for (const { node, parent, index } of nodesToProcess) {
+    for (const { node, codeNode, parent, index } of nodesToProcess) {
       // Extract language from className (e.g. "language-typescript")
-      const className = (node.properties?.className as string[]) ?? []
+      const className = (codeNode.properties?.className as string[]) ?? []
       const langClass = className.find((c) =>
         typeof c === "string" ? c.startsWith("language-") : false
       )
@@ -211,29 +213,60 @@ function rehypeShiki(options: { theme: string }) {
       }
 
       // Extract raw text content
-      const code = extractText(node)
+      const code = extractText(codeNode)
 
       try {
         const highlighted = await highlightCode(code, lang, options.theme)
 
         // Parse the highlighted HTML back into hast
-        const parsed = await unified()
-          .use(rehypeStringify)
-          .use(function () {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.compiler = function (tree: any) {
-              return tree
-            }
-          })
-          .process("")
+        const parsed = unified()
+          .use(rehypeParse, { fragment: true })
+          .parse(highlighted) as Root
 
-        // Replace the <pre> node with raw HTML
-        // We use a raw node to inject Shiki's output
-        parent.children[index] = {
-          type: "raw" as never,
-          value: highlighted,
-        } as never
-      } catch {
+        // The parsed tree is a Root containing the <pre> element
+        if (parsed.children.length > 0) {
+          const preElement = parsed.children[0] as Element
+          
+          if (options.codeBlock) {
+            // Setup parent container if we need decorations like filename label
+            const container: Element = {
+              type: "element",
+              tagName: "div",
+              properties: { className: ["code-block-container"] },
+              children: []
+            }
+            
+            // Add Line Numbers class to <pre>
+            if (options.codeBlock.lineNumbers && preElement.properties) {
+              const preClasses = (preElement.properties.className as string[]) || [];
+              preElement.properties.className = [...preClasses, "has-line-numbers"];
+            }
+
+            // File Name Label
+            if (options.codeBlock.fileNameLabel) {
+              const header: Element = {
+                type: "element",
+                tagName: "div",
+                properties: { className: ["code-block-header"] },
+                children: [
+                  { type: "text", value: lang === "text" ? "code" : lang }
+                ]
+              }
+              // Adjust <pre> border-radius if header is present
+              if (preElement.properties) {
+                preElement.properties.style = (preElement.properties.style || "") + " border-top-left-radius: 0; border-top-right-radius: 0; margin-top: 0;";
+              }
+              container.children.push(header)
+            }
+            
+            container.children.push(preElement)
+            parent.children[index] = container as never
+          } else {
+            parent.children[index] = preElement as never
+          }
+        }
+      } catch (err) {
+        console.error("Shiki error:", err)
         // On failure, keep the original <pre><code> block
       }
     }

@@ -130,7 +130,7 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
         <div
           ref={ref}
           data-page={pageNumber}
-          className="relative origin-top-left bg-white shadow-lg ring-1 ring-black/5 dark:bg-zinc-50"
+          className="preview-page-wrapper relative origin-top-left bg-white shadow-lg ring-1 ring-black/5 dark:bg-zinc-50"
           style={{
             width: widthPx,
             minHeight: heightPx,
