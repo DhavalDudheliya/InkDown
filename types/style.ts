@@ -1,0 +1,128 @@
+// ── Theme Names ──────────────────────────────────────────────
+
+export type ThemeName =
+  | "modern-purple"
+  | "ocean-blue"
+  | "forest-green"
+  | "warm-amber"
+  | "minimal-gray"
+  | "corporate"
+
+// ── Font Configuration ───────────────────────────────────────
+
+export interface FontConfig {
+  family: string
+  size: number // px
+  lineHeight: number // unitless multiplier
+  letterSpacing: number // em
+  weight: number // 100–900
+}
+
+export type FontRole = "body" | "heading" | "monospace"
+
+// ── Heading Configuration ────────────────────────────────────
+
+export interface HeadingConfig {
+  fontSize: number // px
+  fontWeight: number
+  color: string // hex
+  spacingTop: number // px
+  spacingBottom: number // px
+  borderBottom: boolean
+  underline: boolean
+}
+
+export type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
+
+export type HeadingStyles = Record<HeadingLevel, HeadingConfig>
+
+// ── Color Configuration ──────────────────────────────────────
+
+export interface ColorConfig {
+  headingColors: Record<HeadingLevel, string>
+  bodyTextColor: string
+  secondaryTextColor: string
+  linkColor: string
+  visitedLinkColor: string
+  blockquoteBorderColor: string
+  blockquoteBackgroundColor: string
+  tableHeaderBackground: string
+  tableHeaderTextColor: string
+  tableRowAlternateColor: string
+  inlineCodeBackground: string
+  inlineCodeTextColor: string
+  pageBackgroundColor: string
+}
+
+// ── Page Layout ──────────────────────────────────────────────
+
+export type PageSize = "a4" | "letter" | "a5" | "legal"
+export type Orientation = "portrait" | "landscape"
+export type MarginPreset = "narrow" | "normal" | "wide" | "custom"
+
+export interface Margins {
+  top: number // mm
+  right: number // mm
+  bottom: number // mm
+  left: number // mm
+}
+
+export interface PageLayout {
+  size: PageSize
+  orientation: Orientation
+  margins: Margins
+  marginPreset: MarginPreset
+  maxContentWidth: number // mm, 0 = full width
+  twoColumn: boolean
+}
+
+// ── Header & Footer ─────────────────────────────────────────
+
+export type HeaderFooterSlotContent =
+  | { type: "none" }
+  | { type: "text"; value: string }
+  | { type: "title" }
+  | { type: "date" }
+  | { type: "pageNumber" }
+  | { type: "totalPages" }
+  | { type: "logo"; src: string }
+
+export type PageNumberFormat = "arabic" | "roman" | "alphabetical"
+
+export interface HeaderFooterConfig {
+  left: HeaderFooterSlotContent
+  center: HeaderFooterSlotContent
+  right: HeaderFooterSlotContent
+  dividerEnabled: boolean
+  dividerColor: string
+  dividerThickness: number // px
+  showOnFirstPage: boolean
+}
+
+export interface HeaderFooterSettings {
+  header: HeaderFooterConfig
+  footer: HeaderFooterConfig
+  pageNumberFormat: PageNumberFormat
+}
+
+// ── Body Text ────────────────────────────────────────────────
+
+export type TextAlignment = "left" | "justify"
+
+export interface BodyTextConfig {
+  paragraphSpacing: number // px
+  textAlignment: TextAlignment
+  firstLineIndent: boolean
+}
+
+// ── Full Document Theme ──────────────────────────────────────
+
+export interface DocumentTheme {
+  name: ThemeName
+  displayName: string
+  fonts: Record<FontRole, FontConfig>
+  headings: HeadingStyles
+  colors: ColorConfig
+  bodyText: BodyTextConfig
+  codeTheme: string // Shiki theme id
+}
