@@ -32,7 +32,7 @@ export function SidebarContainer({ className }: SidebarContainerProps) {
   return (
     <div
       className={cn(
-        "flex w-72 shrink-0 flex-col border-l border-border bg-background",
+        "flex h-full w-72 shrink-0 flex-col overflow-hidden border-l border-border bg-background",
         className
       )}
     >

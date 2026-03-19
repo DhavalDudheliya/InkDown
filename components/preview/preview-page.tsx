@@ -125,7 +125,7 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
     return (
       <div
         className={cn("flex shrink-0 justify-center", className)}
-        style={{ width: widthPx * scale, height: heightPx * scale }}
+        style={{ width: widthPx * scale, minHeight: heightPx * scale }}
       >
         <div
           ref={ref}
@@ -133,7 +133,7 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
           className="relative origin-top-left bg-white shadow-lg ring-1 ring-black/5 dark:bg-zinc-50"
           style={{
             width: widthPx,
-            height: heightPx,
+            minHeight: heightPx,
             transform: `scale(${scale})`,
             paddingTop: `${pageLayout.margins.top * MM_TO_PX}px`,
             paddingRight: `${paddingRightSettings}px`,
