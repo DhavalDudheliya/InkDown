@@ -69,21 +69,23 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
   const previewStyles = buildPreviewStyles(fonts, colors, bodyText, headings, tableConfig)
 
   return (
-    <div className={cn("flex h-full flex-col", className)}>
-      <PreviewToolbar
-        zoom={zoom}
-        onZoomIn={handleZoomIn}
-        onZoomOut={handleZoomOut}
-        onZoomFit={handleZoomFit}
-        currentPage={currentPage}
-        totalPages={1}
-        onPrevPage={() => setCurrentPage((p) => Math.max(1, p - 1))}
-        onNextPage={() => setCurrentPage((p) => p + 1)}
-      />
+    <div className={cn("flex h-full flex-col print:h-auto print:overflow-visible", className)}>
+      <div className="print:hidden">
+        <PreviewToolbar
+          zoom={zoom}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onZoomFit={handleZoomFit}
+          currentPage={currentPage}
+          totalPages={1}
+          onPrevPage={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          onNextPage={() => setCurrentPage((p) => p + 1)}
+        />
+      </div>
 
       {/* Preview scroll area */}
-      <div ref={scrollRef} className="flex-1 overflow-auto bg-muted/30">
-        <div className="flex flex-col items-center gap-6 p-6">
+      <div ref={scrollRef} className="flex-1 overflow-auto bg-muted/30 print:overflow-visible print:bg-white">
+        <div className="flex flex-col items-center gap-6 p-6 print:p-0 print:block">
           {/* Inject preview-specific CSS variables */}
           <style>{previewStyles}</style>
 

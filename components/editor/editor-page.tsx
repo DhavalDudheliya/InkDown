@@ -38,9 +38,11 @@ export function EditorPage() {
   const showPreview = viewMode === "split" || viewMode === "preview"
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background">
+    <div className="flex h-screen flex-col overflow-hidden bg-background print:h-auto print:overflow-visible">
       {/* Navbar */}
-      <Navbar />
+      <div className="print:hidden">
+        <Navbar />
+      </div>
 
       {/* Main workspace */}
       <div className="flex flex-1 overflow-hidden">
@@ -50,8 +52,8 @@ export function EditorPage() {
           {showEditor && (
             <Panel
               defaultSize={viewMode === "split" ? "50%" : "100%"}
-              minSize="30%"
               id="editor-panel"
+              className="print:hidden"
             >
               <div className="flex h-full flex-col">
                 <MarkdownEditor
@@ -65,7 +67,7 @@ export function EditorPage() {
 
           {/* Resize handle */}
           {viewMode === "split" && (
-            <Separator className="group relative w-px bg-border transition-colors hover:bg-primary data-[resize-handle-state=drag]:bg-primary">
+            <Separator className="group relative w-px bg-border transition-colors hover:bg-primary data-[resize-handle-state=drag]:bg-primary print:hidden">
               <div className="absolute inset-y-0 -left-1 -right-1 z-10" />
               <div
                 className={cn(
@@ -96,7 +98,9 @@ export function EditorPage() {
         </Group>
 
         {/* Right sidebar */}
-        {sidebarOpen && !focusMode && <SidebarContainer />}
+        <div className="print:hidden">
+          {sidebarOpen && !focusMode && <SidebarContainer />}
+        </div>
       </div>
     </div>
   )
