@@ -7,6 +7,7 @@ import {
   DEFAULT_PAGE_LAYOUT,
   DEFAULT_DOCUMENT_STRUCTURE,
   DEFAULT_SPECIAL_CONTENT,
+  DEFAULT_TABLE_CONFIG,
   THEME_DEFINITIONS,
 } from "@/constants"
 import type { CodeBlockConfig } from "@/types/code-block"
@@ -23,6 +24,7 @@ import type {
   ThemeName,
   DocumentStructureSettings,
   SpecialContentSettings,
+  TableConfig,
 } from "@/types/style"
 
 const defaultTheme = THEME_DEFINITIONS["modern-purple"]
@@ -49,6 +51,9 @@ interface StyleState {
 
   // Special Content
   specialContent: SpecialContentSettings
+
+  // Tables
+  tableConfig: TableConfig
 }
 
 interface StyleActions {
@@ -86,6 +91,9 @@ interface StyleActions {
   // Special Content
   setSpecialContent: (config: Partial<SpecialContentSettings>) => void
 
+  // Tables
+  setTableConfig: (config: Partial<TableConfig>) => void
+
   // Reset
   resetToDefaults: () => void
 }
@@ -102,6 +110,7 @@ function getInitialState(): StyleState {
     headerFooter: { ...DEFAULT_HEADER_FOOTER },
     documentStructure: { ...DEFAULT_DOCUMENT_STRUCTURE },
     specialContent: { ...DEFAULT_SPECIAL_CONTENT },
+    tableConfig: { ...DEFAULT_TABLE_CONFIG },
   }
 }
 
@@ -195,6 +204,12 @@ export const useStyleStore = create<StyleState & StyleActions>((set) => ({
   setSpecialContent: (config) => {
     set((state) => ({
       specialContent: { ...state.specialContent, ...config },
+    }))
+  },
+
+  setTableConfig: (config) => {
+    set((state) => ({
+      tableConfig: { ...state.tableConfig, ...config },
     }))
   },
 

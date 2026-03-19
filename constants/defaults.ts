@@ -5,6 +5,7 @@ import type {
   PageLayout,
   DocumentStructureSettings,
   SpecialContentSettings,
+  TableConfig,
 } from "@/types/style"
 
 export const DEFAULT_PAGE_LAYOUT: PageLayout = {
@@ -89,4 +90,11 @@ export const DEFAULT_SPECIAL_CONTENT: SpecialContentSettings = {
     theme: "modern",
     fontSize: 14,
   },
+}
+
+export const DEFAULT_TABLE_CONFIG: TableConfig = {
+  borderStyle: "horizontal",
+  stripedRows: false,
+  cellPadding: 8,
+  headerBold: true,
 }

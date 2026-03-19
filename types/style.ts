@@ -158,6 +158,17 @@ export interface SpecialContentSettings {
   }
 }
 
+// ── Tables ──────────────────────────────────────────
+
+export type TableBorderStyle = "none" | "horizontal" | "grid"
+
+export interface TableConfig {
+  borderStyle: TableBorderStyle
+  stripedRows: boolean
+  cellPadding: number
+  headerBold: boolean
+}
+
 // ── Full Document Theme ──────────────────────────────────────
 
 export interface DocumentTheme {

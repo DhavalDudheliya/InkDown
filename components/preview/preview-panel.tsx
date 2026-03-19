@@ -26,6 +26,7 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
   const headerFooter = useStyleStore((s) => s.headerFooter)
   const documentStructure = useStyleStore((s) => s.documentStructure)
   const specialContent = useStyleStore((s) => s.specialContent)
+  const tableConfig = useStyleStore((s) => s.tableConfig)
 
   const debouncedContent = useDebounce(content, 300)
   const [html, setHtml] = useState("")
@@ -65,7 +66,7 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
   }, [])
 
   // Build inline styles based on store state
-  const previewStyles = buildPreviewStyles(fonts, colors, bodyText, headings)
+  const previewStyles = buildPreviewStyles(fonts, colors, bodyText, headings, tableConfig)
 
   return (
     <div className={cn("flex h-full flex-col", className)}>
@@ -109,7 +110,8 @@ function buildPreviewStyles(
   fonts: ReturnType<typeof useStyleStore.getState>["fonts"],
   colors: ReturnType<typeof useStyleStore.getState>["colors"],
   bodyText: ReturnType<typeof useStyleStore.getState>["bodyText"],
-  headings: ReturnType<typeof useStyleStore.getState>["headings"]
+  headings: ReturnType<typeof useStyleStore.getState>["headings"],
+  tableConfig: ReturnType<typeof useStyleStore.getState>["tableConfig"]
 ): string {
   const headingLevels = ["h1", "h2", "h3", "h4", "h5", "h6"] as const
 
@@ -198,24 +200,27 @@ function buildPreviewStyles(
       border-collapse: collapse;
       margin: 16px 0;
       font-size: 0.9em;
+      ${tableConfig.borderStyle === "grid" ? `border: 1px solid ${colors.tableRowAlternateColor};` : ""}
     }
 
     .preview-content thead th {
       background-color: ${colors.tableHeaderBackground};
       color: ${colors.tableHeaderTextColor};
-      font-weight: 600;
-      padding: 10px 12px;
+      font-weight: ${tableConfig.headerBold ? 600 : 400};
+      padding: ${tableConfig.cellPadding}px;
       text-align: left;
       border-bottom: 2px solid ${colors.tableRowAlternateColor};
+      ${tableConfig.borderStyle === "grid" ? `border-right: 1px solid ${colors.tableRowAlternateColor};` : ""}
     }
 
     .preview-content tbody td {
-      padding: 8px 12px;
-      border-bottom: 1px solid ${colors.tableRowAlternateColor}40;
+      padding: ${tableConfig.cellPadding}px;
+      ${tableConfig.borderStyle !== "none" ? `border-bottom: 1px solid ${colors.tableRowAlternateColor}40;` : ""}
+      ${tableConfig.borderStyle === "grid" ? `border-right: 1px solid ${colors.tableRowAlternateColor}40;` : ""}
     }
 
     .preview-content tbody tr:nth-child(even) {
-      background-color: ${colors.tableRowAlternateColor};
+      ${tableConfig.stripedRows ? `background-color: ${colors.tableRowAlternateColor};` : ""}
     }
 
     .preview-content img {
