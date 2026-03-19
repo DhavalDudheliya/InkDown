@@ -3,14 +3,16 @@
 import { forwardRef } from "react"
 
 import { cn } from "@/lib/utils"
-import type { PageLayout } from "@/types/style"
+import type { PageLayout, HeaderFooterSettings, HeaderFooterConfig, HeaderFooterSlotContent } from "@/types/style"
 import { PAGE_SIZES } from "@/constants/page-sizes"
 
 interface PreviewPageProps {
   html: string
   pageLayout: PageLayout
+  headerFooter: HeaderFooterSettings
   zoom: number
   pageNumber: number
+  totalPages: number
   className?: string
 }
 
@@ -19,7 +21,10 @@ interface PreviewPageProps {
  * background. The page is scaled according to the current zoom level.
  */
 export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
-  function PreviewPage({ html, pageLayout, zoom, pageNumber, className }, ref) {
+  function PreviewPage(
+    { html, pageLayout, headerFooter, zoom, pageNumber, totalPages, className },
+    ref
+  ) {
     const dimensions = PAGE_SIZES[pageLayout.size]
     const isLandscape = pageLayout.orientation === "landscape"
 
@@ -34,6 +39,79 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
 
     const scale = zoom / 100
 
+    const formatPageNumber = (num: number, format: HeaderFooterSettings["pageNumberFormat"]) => {
+      if (format === "roman") {
+        // Very basic roman numeral conversion for typical page numbers
+        const roman = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"]
+        return roman[num - 1] || num.toString()
+      }
+      if (format === "alphabetical") {
+        return String.fromCharCode(96 + num)
+      }
+      return num.toString()
+    }
+
+    const renderSlot = (slot: HeaderFooterSlotContent) => {
+      switch (slot.type) {
+        case "none":
+          return null
+        case "text":
+          return <span>{slot.value}</span>
+        case "title":
+          return <span>Untitled Document</span> // Alternatively hook up to document name
+        case "date":
+          return <span>{new Date().toLocaleDateString()}</span>
+        case "pageNumber":
+          return <span>{formatPageNumber(pageNumber, headerFooter.pageNumberFormat)}</span>
+        case "totalPages":
+          return <span>Page {pageNumber} of {totalPages}</span>
+        case "logo":
+          // eslint-disable-next-line @next/next/no-img-element
+          return <img src={slot.src || "https://placehold.co/100x40"} alt="Logo" className="h-6 object-contain" />
+        default:
+          return null
+      }
+    }
+
+    const renderHeaderFooter = (
+      config: HeaderFooterConfig,
+      position: "header" | "footer",
+      marginMm: number,
+      paddingLeft: number,
+      paddingRight: number
+    ) => {
+      if (!config.showOnFirstPage && pageNumber === 1) return null
+      
+      const isHeader = position === "header"
+      
+      return (
+        <div
+          className={cn(
+            "absolute flex items-center justify-between text-[11px] text-muted-foreground",
+            config.dividerEnabled && isHeader ? "border-b pb-2" : "",
+            config.dividerEnabled && !isHeader ? "border-t pt-2" : ""
+          )}
+          style={{
+            left: paddingLeft,
+            right: paddingRight,
+            // Position halfway into the margin
+            [isHeader ? "top" : "bottom"]: Math.max((marginMm * MM_TO_PX) / 2 - 10, 0),
+            ...(config.dividerEnabled && {
+              borderColor: config.dividerColor,
+              borderWidth: `${config.dividerThickness}px`,
+            }),
+          }}
+        >
+          <div className="flex-1 text-left">{renderSlot(config.left)}</div>
+          <div className="flex-1 text-center justify-center flex">{renderSlot(config.center)}</div>
+          <div className="flex-1 text-right flex justify-end">{renderSlot(config.right)}</div>
+        </div>
+      )
+    }
+
+    const paddingXSettings = pageLayout.margins.left * MM_TO_PX
+    const paddingRightSettings = pageLayout.margins.right * MM_TO_PX
+
     return (
       <div
         className={cn("flex shrink-0 justify-center", className)}
@@ -42,22 +120,48 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
         <div
           ref={ref}
           data-page={pageNumber}
-          className="origin-top-left overflow-hidden bg-white shadow-lg ring-1 ring-black/5 dark:bg-zinc-50"
+          className="relative origin-top-left bg-white shadow-lg ring-1 ring-black/5 dark:bg-zinc-50"
           style={{
             width: widthPx,
             height: heightPx,
             transform: `scale(${scale})`,
             paddingTop: `${pageLayout.margins.top * MM_TO_PX}px`,
-            paddingRight: `${pageLayout.margins.right * MM_TO_PX}px`,
+            paddingRight: `${paddingRightSettings}px`,
             paddingBottom: `${pageLayout.margins.bottom * MM_TO_PX}px`,
-            paddingLeft: `${pageLayout.margins.left * MM_TO_PX}px`,
+            paddingLeft: `${paddingXSettings}px`,
           }}
         >
+          {/* Header */}
+          {renderHeaderFooter(
+            headerFooter.header, 
+            "header", 
+            pageLayout.margins.top, 
+            paddingXSettings, 
+            paddingRightSettings
+          )}
+
           {/* Rendered HTML content */}
           <div
-            className="preview-content h-full overflow-hidden text-black"
+            className={cn(
+              "preview-content h-full text-black",
+              // Support a two-column CSS layout if enabled
+              pageLayout.twoColumn ? "columns-2 gap-8" : "",
+            )}
+            style={{
+              maxWidth: pageLayout.maxContentWidth > 0 ? `${pageLayout.maxContentWidth * MM_TO_PX}px` : "none",
+              margin: pageLayout.maxContentWidth > 0 ? "0 auto" : "0"
+            }}
             dangerouslySetInnerHTML={{ __html: html }}
           />
+
+          {/* Footer */}
+          {renderHeaderFooter(
+            headerFooter.footer, 
+            "footer", 
+            pageLayout.margins.bottom, 
+            paddingXSettings, 
+            paddingRightSettings
+          )}
         </div>
       </div>
     )
