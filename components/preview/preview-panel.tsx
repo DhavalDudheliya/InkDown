@@ -24,6 +24,8 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
   const headings = useStyleStore((s) => s.headings)
   const codeBlock = useStyleStore((s) => s.codeBlock)
   const headerFooter = useStyleStore((s) => s.headerFooter)
+  const documentStructure = useStyleStore((s) => s.documentStructure)
+  const specialContent = useStyleStore((s) => s.specialContent)
 
   const debouncedContent = useDebounce(content, 300)
   const [html, setHtml] = useState("")
@@ -34,13 +36,13 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
   // Parse markdown when content changes
   useEffect(() => {
     let cancelled = false
-    parseMarkdown(debouncedContent, codeBlock.theme).then((result) => {
+    parseMarkdown(debouncedContent, codeBlock.theme, documentStructure, specialContent).then((result) => {
       if (!cancelled) setHtml(result)
     })
     return () => {
       cancelled = true
     }
-  }, [debouncedContent, codeBlock.theme])
+  }, [debouncedContent, codeBlock.theme, documentStructure, specialContent])
 
   // Zoom handlers
   const handleZoomIn = useCallback(() => {
@@ -88,6 +90,7 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
             html={html}
             pageLayout={pageLayout}
             headerFooter={headerFooter}
+            documentStructure={documentStructure}
             zoom={zoom}
             pageNumber={1}
             totalPages={1}

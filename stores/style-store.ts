@@ -5,6 +5,8 @@ import {
   DEFAULT_CODE_BLOCK,
   DEFAULT_HEADER_FOOTER,
   DEFAULT_PAGE_LAYOUT,
+  DEFAULT_DOCUMENT_STRUCTURE,
+  DEFAULT_SPECIAL_CONTENT,
   THEME_DEFINITIONS,
 } from "@/constants"
 import type { CodeBlockConfig } from "@/types/code-block"
@@ -19,6 +21,8 @@ import type {
   HeadingLevel,
   PageLayout,
   ThemeName,
+  DocumentStructureSettings,
+  SpecialContentSettings,
 } from "@/types/style"
 
 const defaultTheme = THEME_DEFINITIONS["modern-purple"]
@@ -39,6 +43,12 @@ interface StyleState {
 
   // Header & footer
   headerFooter: HeaderFooterSettings
+
+  // Document Structure
+  documentStructure: DocumentStructureSettings
+
+  // Special Content
+  specialContent: SpecialContentSettings
 }
 
 interface StyleActions {
@@ -70,6 +80,12 @@ interface StyleActions {
   // Header & footer
   setHeaderFooter: (config: Partial<HeaderFooterSettings>) => void
 
+  // Document Structure
+  setDocumentStructure: (config: Partial<DocumentStructureSettings>) => void
+
+  // Special Content
+  setSpecialContent: (config: Partial<SpecialContentSettings>) => void
+
   // Reset
   resetToDefaults: () => void
 }
@@ -84,6 +100,8 @@ function getInitialState(): StyleState {
     codeBlock: { ...DEFAULT_CODE_BLOCK },
     pageLayout: { ...DEFAULT_PAGE_LAYOUT },
     headerFooter: { ...DEFAULT_HEADER_FOOTER },
+    documentStructure: { ...DEFAULT_DOCUMENT_STRUCTURE },
+    specialContent: { ...DEFAULT_SPECIAL_CONTENT },
   }
 }
 
@@ -165,6 +183,18 @@ export const useStyleStore = create<StyleState & StyleActions>((set) => ({
   setHeaderFooter: (config) => {
     set((state) => ({
       headerFooter: { ...state.headerFooter, ...config },
+    }))
+  },
+
+  setDocumentStructure: (config) => {
+    set((state) => ({
+      documentStructure: { ...state.documentStructure, ...config },
+    }))
+  },
+
+  setSpecialContent: (config) => {
+    set((state) => ({
+      specialContent: { ...state.specialContent, ...config },
     }))
   },
 

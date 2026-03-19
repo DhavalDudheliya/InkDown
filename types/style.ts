@@ -115,6 +115,49 @@ export interface BodyTextConfig {
   firstLineIndent: boolean
 }
 
+// ── Document Structure ───────────────────────────────────────
+
+export interface TableOfContentsConfig {
+  enabled: boolean
+  title: string
+  maxDepth: number // 1-6
+}
+
+export interface CoverPageConfig {
+  enabled: boolean
+  title: string
+  subtitle: string
+  author: string
+  date: string
+}
+
+export interface SectionNumberingConfig {
+  enabled: boolean
+  maxDepth: number // 1-6
+}
+
+export interface DocumentStructureSettings {
+  toc: TableOfContentsConfig
+  coverPage: CoverPageConfig
+  sectionNumbering: SectionNumberingConfig
+}
+
+// ── Special Content ──────────────────────────────────────────
+
+export type CalloutStyleTheme = "modern" | "classic" | "minimal"
+
+export interface SpecialContentSettings {
+  images: {
+    borderRadius: number
+    shadow: boolean
+    centerAlignment: boolean
+  }
+  callouts: {
+    theme: CalloutStyleTheme
+    fontSize: number
+  }
+}
+
 // ── Full Document Theme ──────────────────────────────────────
 
 export interface DocumentTheme {

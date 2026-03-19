@@ -1,15 +1,17 @@
 "use client"
 
-import { forwardRef } from "react"
+import { forwardRef, useEffect } from "react"
+import mermaid from "mermaid"
 
 import { cn } from "@/lib/utils"
-import type { PageLayout, HeaderFooterSettings, HeaderFooterConfig, HeaderFooterSlotContent } from "@/types/style"
+import type { PageLayout, HeaderFooterSettings, HeaderFooterConfig, HeaderFooterSlotContent, DocumentStructureSettings } from "@/types/style"
 import { PAGE_SIZES } from "@/constants/page-sizes"
 
 interface PreviewPageProps {
   html: string
   pageLayout: PageLayout
   headerFooter: HeaderFooterSettings
+  documentStructure: DocumentStructureSettings
   zoom: number
   pageNumber: number
   totalPages: number
@@ -22,7 +24,7 @@ interface PreviewPageProps {
  */
 export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
   function PreviewPage(
-    { html, pageLayout, headerFooter, zoom, pageNumber, totalPages, className },
+    { html, pageLayout, headerFooter, documentStructure, zoom, pageNumber, totalPages, className },
     ref
   ) {
     const dimensions = PAGE_SIZES[pageLayout.size]
@@ -38,6 +40,14 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
     const heightPx = heightMm * MM_TO_PX
 
     const scale = zoom / 100
+
+    useEffect(() => {
+      mermaid.initialize({ startOnLoad: false, theme: "default" })
+      mermaid.run({
+        querySelector: ".mermaid",
+        suppressErrors: true,
+      }).catch(console.error)
+    }, [html])
 
     const formatPageNumber = (num: number, format: HeaderFooterSettings["pageNumberFormat"]) => {
       if (format === "roman") {
@@ -140,7 +150,7 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
             paddingRightSettings
           )}
 
-          {/* Rendered HTML content */}
+          {/* Rendered HTML content with conditional Cover Page */}
           <div
             className={cn(
               "preview-content h-full text-black",
@@ -151,8 +161,29 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
               maxWidth: pageLayout.maxContentWidth > 0 ? `${pageLayout.maxContentWidth * MM_TO_PX}px` : "none",
               margin: pageLayout.maxContentWidth > 0 ? "0 auto" : "0"
             }}
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
+          >
+            {documentStructure.coverPage.enabled && (
+              <div 
+                className="flex flex-col items-center justify-center text-center w-full mb-16 break-after-page"
+                style={{ minHeight: heightPx * 0.7 }}
+              >
+                {documentStructure.coverPage.title && (
+                  <h1 className="text-5xl font-bold mb-4">{documentStructure.coverPage.title}</h1>
+                )}
+                {documentStructure.coverPage.subtitle && (
+                  <p className="text-2xl text-muted-foreground mb-12">{documentStructure.coverPage.subtitle}</p>
+                )}
+                {documentStructure.coverPage.author && (
+                  <p className="text-xl font-medium mt-auto">{documentStructure.coverPage.author}</p>
+                )}
+                {documentStructure.coverPage.date && (
+                  <p className="text-lg text-muted-foreground mt-2">{documentStructure.coverPage.date}</p>
+                )}
+              </div>
+            )}
+            
+            <div dangerouslySetInnerHTML={{ __html: html }} />
+          </div>
 
           {/* Footer */}
           {renderHeaderFooter(

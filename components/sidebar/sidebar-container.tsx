@@ -17,6 +17,8 @@ import { ColorPanel } from "./color-panel"
 import { CodeBlockPanel } from "./code-block-panel"
 import { PageLayoutPanel } from "./page-layout-panel"
 import { HeaderFooterPanel } from "./header-footer-panel"
+import { DocumentStructurePanel } from "./document-structure-panel"
+import { SpecialContentPanel } from "./special-content-panel"
 
 interface SidebarContainerProps {
   className?: string
@@ -54,8 +56,10 @@ export function SidebarContainer({ className }: SidebarContainerProps) {
         <div className="flex flex-col gap-0 p-2">
           <ThemePanel />
           <PageLayoutPanel />
+          <DocumentStructurePanel />
           <TypographyPanel />
           <ColorPanel />
+          <SpecialContentPanel />
           <HeaderFooterPanel />
           <CodeBlockPanel />
         </div>

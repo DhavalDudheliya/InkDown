@@ -3,6 +3,8 @@ import type {
   BodyTextConfig,
   HeaderFooterSettings,
   PageLayout,
+  DocumentStructureSettings,
+  SpecialContentSettings,
 } from "@/types/style"
 
 export const DEFAULT_PAGE_LAYOUT: PageLayout = {
@@ -57,3 +59,34 @@ export const DEFAULT_BODY_TEXT: BodyTextConfig = {
 }
 
 export const DEFAULT_THEME_NAME = "modern-purple" as const
+
+export const DEFAULT_DOCUMENT_STRUCTURE: DocumentStructureSettings = {
+  toc: {
+    enabled: false,
+    title: "Table of Contents",
+    maxDepth: 3,
+  },
+  coverPage: {
+    enabled: false,
+    title: "",
+    subtitle: "",
+    author: "",
+    date: "",
+  },
+  sectionNumbering: {
+    enabled: false,
+    maxDepth: 3,
+  },
+}
+
+export const DEFAULT_SPECIAL_CONTENT: SpecialContentSettings = {
+  images: {
+    borderRadius: 8,
+    shadow: true,
+    centerAlignment: true,
+  },
+  callouts: {
+    theme: "modern",
+    fontSize: 14,
+  },
+}
