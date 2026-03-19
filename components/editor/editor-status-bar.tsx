@@ -1,6 +1,8 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { useDocumentStore } from "@/stores"
+import { Cloud, CloudFog, CloudLightning, Loader2 } from "lucide-react"
 import type { EditorStats } from "./markdown-editor"
 
 interface EditorStatusBarProps {
@@ -9,6 +11,8 @@ interface EditorStatusBarProps {
 }
 
 export function EditorStatusBar({ stats, className }: EditorStatusBarProps) {
+  const isDirty = useDocumentStore((s) => s.isDirty)
+
   return (
     <div
       className={cn(
@@ -17,6 +21,20 @@ export function EditorStatusBar({ stats, className }: EditorStatusBarProps) {
       )}
     >
       <div className="flex items-center gap-3">
+        <span className="flex items-center gap-1.5 text-muted-foreground">
+          {isDirty ? (
+            <>
+              <Loader2 className="h-3 w-3 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Cloud className="h-3 w-3 text-green-500/80" />
+              Saved locally
+            </>
+          )}
+        </span>
+        <span className="h-3 w-px bg-border" />
         <span>
           Ln {stats.cursorLine}, Col {stats.cursorColumn}
         </span>

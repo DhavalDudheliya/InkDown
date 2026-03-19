@@ -19,6 +19,8 @@ import { PageLayoutPanel } from "./page-layout-panel"
 import { HeaderFooterPanel } from "./header-footer-panel"
 import { DocumentStructurePanel } from "./document-structure-panel"
 import { SpecialContentPanel } from "./special-content-panel"
+import { TablePanel } from "./table-panel"
+import { PresetPanel } from "./preset-panel"
 
 interface SidebarContainerProps {
   className?: string
@@ -54,12 +56,14 @@ export function SidebarContainer({ className }: SidebarContainerProps) {
       {/* Sidebar content */}
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-0 p-2">
+          <PresetPanel />
           <ThemePanel />
           <PageLayoutPanel />
           <DocumentStructurePanel />
           <TypographyPanel />
           <ColorPanel />
           <SpecialContentPanel />
+          <TablePanel />
           <HeaderFooterPanel />
           <CodeBlockPanel />
         </div>

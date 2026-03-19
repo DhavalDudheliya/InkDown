@@ -1,89 +1,68 @@
 import { create } from "zustand"
+import { persist } from "zustand/middleware"
+
+import type { StyleState } from "./style-store"
 
 export interface Preset {
   id: string
   name: string
-  description: string
-  createdAt: Date
-  updatedAt: Date
-  config: string // Serialized JSON of style settings
+  createdAt: number
+  settings: Omit<StyleState, "activeTheme"> // optionally omit activeTheme, but it's safe to keep
 }
 
 interface PresetState {
-  presets: Preset[]
-  activePresetId: string | null
+  savedPresets: Preset[]
 }
 
 interface PresetActions {
-  savePreset: (name: string, description: string, config: string) => void
-  loadPreset: (id: string) => Preset | undefined
+  savePreset: (name: string, settings: StyleState) => void
   deletePreset: (id: string) => void
-  updatePreset: (id: string, updates: Partial<Preset>) => void
-  setActivePreset: (id: string | null) => void
-  importPreset: (preset: Preset) => void
+  importPreset: (json: string) => Preset | null
 }
 
-function generateId(): string {
-  return `preset_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
-}
+export const usePresetStore = create<PresetState & PresetActions>()(
+  persist(
+    (set, get) => ({
+      savedPresets: [],
 
-export const usePresetStore = create<PresetState & PresetActions>(
-  (set, get) => ({
-    presets: [],
-    activePresetId: null,
+      savePreset: (name, settings) => {
+        const newPreset: Preset = {
+          id: crypto.randomUUID(),
+          name,
+          createdAt: Date.now(),
+          settings,
+        }
+        set((state) => ({ savedPresets: [...state.savedPresets, newPreset] }))
+      },
 
-    savePreset: (name, description, config) => {
-      const now = new Date()
-      const preset: Preset = {
-        id: generateId(),
-        name,
-        description,
-        createdAt: now,
-        updatedAt: now,
-        config,
-      }
+      deletePreset: (id) => {
+        set((state) => ({
+          savedPresets: state.savedPresets.filter((p) => p.id !== id),
+        }))
+      },
 
-      set((state) => ({
-        presets: [...state.presets, preset],
-        activePresetId: preset.id,
-      }))
-    },
-
-    loadPreset: (id) => {
-      return get().presets.find((p) => p.id === id)
-    },
-
-    deletePreset: (id) => {
-      set((state) => ({
-        presets: state.presets.filter((p) => p.id !== id),
-        activePresetId:
-          state.activePresetId === id ? null : state.activePresetId,
-      }))
-    },
-
-    updatePreset: (id, updates) => {
-      set((state) => ({
-        presets: state.presets.map((p) =>
-          p.id === id ? { ...p, ...updates, updatedAt: new Date() } : p
-        ),
-      }))
-    },
-
-    setActivePreset: (id) => {
-      set({ activePresetId: id })
-    },
-
-    importPreset: (preset) => {
-      const newPreset: Preset = {
-        ...preset,
-        id: generateId(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-
-      set((state) => ({
-        presets: [...state.presets, newPreset],
-      }))
-    },
-  })
+      importPreset: (json) => {
+        try {
+          const parsed = JSON.parse(json)
+          // Basic validation (can be more robust in production)
+          if (!parsed.name || !parsed.settings || !parsed.settings.colors) {
+            return null
+          }
+          const preset: Preset = {
+            id: crypto.randomUUID(),
+            name: parsed.name,
+            createdAt: Date.now(),
+            settings: parsed.settings,
+          }
+           set((state) => ({ savedPresets: [...state.savedPresets, preset] }))
+           return preset
+        } catch {
+          return null
+        }
+      },
+    }),
+    {
+      name: "inkdown-presets",
+    }
+  )
 )

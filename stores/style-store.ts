@@ -29,7 +29,7 @@ import type {
 
 const defaultTheme = THEME_DEFINITIONS["modern-purple"]
 
-interface StyleState {
+export interface StyleState {
   // Current theme
   activeTheme: ThemeName
   fonts: Record<FontRole, FontConfig>
@@ -56,7 +56,7 @@ interface StyleState {
   tableConfig: TableConfig
 }
 
-interface StyleActions {
+export interface StyleActions {
   // Theme
   applyTheme: (themeName: ThemeName) => void
 
@@ -93,6 +93,9 @@ interface StyleActions {
 
   // Tables
   setTableConfig: (config: Partial<TableConfig>) => void
+
+  // Presets
+  loadSettings: (settings: Partial<StyleState>) => void
 
   // Reset
   resetToDefaults: () => void
@@ -210,6 +213,13 @@ export const useStyleStore = create<StyleState & StyleActions>((set) => ({
   setTableConfig: (config) => {
     set((state) => ({
       tableConfig: { ...state.tableConfig, ...config },
+    }))
+  },
+
+  loadSettings: (settings) => {
+    set((state) => ({
+      ...state,
+      ...settings,
     }))
   },
 
