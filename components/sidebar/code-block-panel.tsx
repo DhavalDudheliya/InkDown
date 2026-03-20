@@ -27,23 +27,13 @@ export function CodeBlockPanel() {
             value={codeBlock.theme}
             onValueChange={(v) => setCodeBlock({ theme: v as string })}
           >
-            <SelectTrigger className="h-7 text-xs">
+            <SelectTrigger className="text-xs w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {CODE_THEMES.map((t) => (
                 <SelectItem key={t.id} value={t.id}>
-                  <span className="flex items-center gap-1.5">
-                    <span
-                      className="inline-block h-2.5 w-2.5 rounded-full"
-                      style={{
-                        backgroundColor: t.isDark ? "#1e1e2e" : "#fafafa",
-                        border: "1px solid",
-                        borderColor: t.isDark ? "#313244" : "#d4d4d8",
-                      }}
-                    />
-                    {t.displayName}
-                  </span>
+                  {t.displayName}
                 </SelectItem>
               ))}
             </SelectContent>

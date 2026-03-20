@@ -206,7 +206,6 @@ function buildPreviewStyles(
       background-color: ${colors.inlineCodeBackground};
       border-radius: ${codeBlock.borderRadius}px;
       padding: ${codeBlock.padding}px;
-      margin: ${codeBlock.fileNameLabel ? "0" : "16px 0"};
       overflow-x: auto;
       ${codeBlock.wordWrap ? "white-space: pre-wrap; word-wrap: break-word;" : "white-space: pre;"}
       ${codeBlock.border && !codeBlock.fileNameLabel ? `border: 1px solid ${colors.inlineCodeTextColor}20;` : ""}
@@ -230,8 +229,7 @@ function buildPreviewStyles(
       content: counter(line);
       display: inline-block;
       width: 2rem;
-      margin-right: 1.5rem;
-      text-align: right;
+      text-align: left;
       color: ${colors.inlineCodeTextColor}60;
     }
 

@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "../ui/button"
 
 interface FontPickerProps {
   label?: string
@@ -50,25 +51,27 @@ export function FontPicker({
       )}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
-          className="flex h-8 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-sm shadow-sm transition-colors hover:bg-accent"
+          className="w-full"
           style={{ fontFamily: value }}
         >
-          <span className="truncate">{value}</span>
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            className="ml-2 shrink-0 opacity-50"
-          >
-            <path
-              d="M3 4.5L6 7.5L9 4.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <Button variant="outline" className="w-full justify-between">
+            <span className="truncate">{value}</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              className="ml-2 shrink-0 opacity-50"
+            >
+              <path
+                d="M3 4.5L6 7.5L9 4.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Button>
         </PopoverTrigger>
         <PopoverContent className="w-64 p-0" align="start">
           <div className="border-b p-2">
