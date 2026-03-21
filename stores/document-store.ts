@@ -20,39 +20,57 @@ interface DocumentActions {
 
 const DEFAULT_CONTENT = `# Welcome to InkDown
 
-Start writing your Markdown here. The live preview will update as you type.
+Start writing your Markdown here. Use the Style Settings in the sidebar to customize every aspect of your PDF.
 
-## Features
+## Style Settings
 
-- **Rich Markdown editing** with syntax highlighting
-- **Live preview** that looks exactly like your final PDF
-- **Code blocks** with beautiful syntax highlighting
-- **Customizable themes**, typography, and colors
-- **Export to PDF** with one click
+| Category | Features | Customization |
+| :--- | :--- | :--- |
+| **Professional Themes** | Instantly apply curated styles | Clean Slate, Elegant Serif, etc. |
+| **Advanced Typography** | 50+ Google Fonts | Sizes, Line Heights, Letter Gaps |
+| **Enhanced Code Blocks** | 15+ Shiki Syntax Themes | Line Numbers, Language Badges |
+| **Document Structure** | Table of Contents & Cover Page | Section Numbering, TOC Depth |
+| **Dynamic Headers** | Custom Page Headers & Footers | Page Numbers, Dates, Dividers |
+| **Special Content** | Images & Alerts | Callout Styles, Image Rounding |
 
-## Example Code Block
+## High-Performance Features
+
+- **One-Click Export** – Generate high-quality, print-ready, vector-based PDFs instantly.
+- **Style Presets** – Instantly apply expertly crafted themes to your entire document.
+- **Real-Time Preview** – Experience what your final document will look like as you type.
+- **Beautiful Mathematics** – Full support for KaTeX equations and scientific notation.
+- **GFM Support** – Markdown tables, lists, and task lists with professional styling.
+
+## Code Blocks
+
+InkDown renders code blocks with full syntax highlighting. Toggle line numbers, language badges, and styling in the sidebar.
 
 \`\`\`javascript
-function greet(name) {
-  return \`Hello, \${name}! Welcome to InkDown.\`
-}
+// Example of a beautiful code block in InkDown
+async function exportToPDF(markdown, options) {
+  const html = await parseMarkdown(markdown)
+  const styled = applyStyles(html, options)
 
-console.log(greet("World"))
+  return await generatePDF(styled, {
+    format: "A4",
+    margin: "8mm",
+    printBackground: true
+  })
+}
 \`\`\`
 
-## Table Example
+## Images & Media
 
-| Feature | Status |
-|---------|--------|
-| Editor | ✅ Ready |
-| Preview | ✅ Ready |
-| Export | ✅ Ready |
+Custom image styles including corner rounding and drop shadows can be applied instantly via the sidebar.
 
-> **Tip:** Use the sidebar to customize your document's appearance.
+![InkDown Demo Image](/demo.png)
 
----
+## Blockquotes & Callouts
 
-Happy writing! ✨
+> "The difference between a good document and a great one is not the content — it is the presentation." — *InkDown Design Team*
+
+> [!NOTE]
+> Use specialized callouts for tips, warnings, and important notes (like this one) in your documents.
 `
 
 export const useDocumentStore = create<DocumentState & DocumentActions>(
