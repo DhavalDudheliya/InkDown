@@ -14,10 +14,6 @@ interface PreviewToolbarProps {
   onZoomIn: () => void
   onZoomOut: () => void
   onZoomFit: () => void
-  currentPage: number
-  totalPages: number
-  onPrevPage: () => void
-  onNextPage: () => void
   className?: string
 }
 
@@ -28,16 +24,12 @@ export function PreviewToolbar({
   onZoomIn,
   onZoomOut,
   onZoomFit,
-  currentPage,
-  totalPages,
-  onPrevPage,
-  onNextPage,
   className,
 }: PreviewToolbarProps) {
   return (
     <div
       className={cn(
-        "flex h-9 shrink-0 items-center justify-between border-b border-border bg-muted/40 px-2",
+        "flex h-9 shrink-0 items-center justify-center border-b border-border bg-muted/40 px-2",
         className
       )}
     >
@@ -79,35 +71,6 @@ export function PreviewToolbar({
             <Maximize2 className="h-3.5 w-3.5" />
           </TooltipTrigger>
           <TooltipContent side="bottom">Fit Width</TooltipContent>
-        </Tooltip>
-      </div>
-
-      {/* Page navigation */}
-      <div className="flex items-center gap-0.5">
-        <Tooltip>
-          <TooltipTrigger
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-50"
-            onClick={onPrevPage}
-            disabled={currentPage <= 1}
-          >
-            <ChevronLeft className="h-3.5 w-3.5" />
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Previous Page</TooltipContent>
-        </Tooltip>
-
-        <span className="text-xs text-muted-foreground tabular-nums">
-          {currentPage} / {totalPages || 1}
-        </span>
-
-        <Tooltip>
-          <TooltipTrigger
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-50"
-            onClick={onNextPage}
-            disabled={currentPage >= totalPages}
-          >
-            <ChevronRight className="h-3.5 w-3.5" />
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Next Page</TooltipContent>
         </Tooltip>
       </div>
     </div>

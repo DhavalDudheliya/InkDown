@@ -7,6 +7,7 @@ import {
   DEFAULT_DOCUMENT_STRUCTURE,
   DEFAULT_SPECIAL_CONTENT,
   DEFAULT_TABLE_CONFIG,
+  DEFAULT_THEME_NAME,
   THEME_DEFINITIONS,
 } from "@/constants"
 import type { CodeBlockConfig } from "@/types/code-block"
@@ -25,7 +26,7 @@ import type {
   TableConfig,
 } from "@/types/style"
 
-const defaultTheme = THEME_DEFINITIONS["modern-purple"]
+const defaultTheme = THEME_DEFINITIONS[DEFAULT_THEME_NAME]
 
 export interface StyleState {
   // Current theme

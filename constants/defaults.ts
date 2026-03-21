@@ -19,7 +19,7 @@ export const DEFAULT_HEADER_FOOTER: HeaderFooterSettings = {
   },
   footer: {
     left: { type: "none" },
-    center: { type: "pageNumber" },
+    center: { type: "none" },
     right: { type: "none" },
     dividerEnabled: false,
     dividerColor: "#e2e8f0",
@@ -31,13 +31,13 @@ export const DEFAULT_HEADER_FOOTER: HeaderFooterSettings = {
 
 export const DEFAULT_CODE_BLOCK: CodeBlockConfig = {
   theme: "catppuccin-mocha",
-  lineNumbers: true,
-  languageBadge: true,
+  lineNumbers: false,
+  languageBadge: false,
   fileNameLabel: false,
   padding: 16,
   borderRadius: 8,
   border: true,
-  wordWrap: false,
+  wordWrap: true,
   highlightLines: "",
   fontSize: 14,
   fontFamily: "JetBrains Mono",
@@ -49,7 +49,7 @@ export const DEFAULT_BODY_TEXT: BodyTextConfig = {
   firstLineIndent: false,
 }
 
-export const DEFAULT_THEME_NAME = "modern-purple" as const
+export const DEFAULT_THEME_NAME = "clean-slate" as const
 
 export const DEFAULT_DOCUMENT_STRUCTURE: DocumentStructureSettings = {
   toc: {

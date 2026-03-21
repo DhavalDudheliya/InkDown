@@ -121,19 +121,19 @@ export function FileImportDialog({ trigger, className }: FileImportDialogProps) 
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="file" className="mt-2">
-          <TabsList>
-            <TabsTrigger value="file">
+        <Tabs defaultValue="file" className="mt-2 w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="file" className="w-full">
               <FileText className="mr-1.5 h-3.5 w-3.5" />
               File
             </TabsTrigger>
-            <TabsTrigger value="url">
+            <TabsTrigger value="url" className="w-full">
               <Link2 className="mr-1.5 h-3.5 w-3.5" />
               URL
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="file" className="mt-4">
+          <TabsContent value="file" className="mt-2">
             {/* Drop zone */}
             <div
               className={cn(

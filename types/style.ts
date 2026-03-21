@@ -1,12 +1,7 @@
 // ── Theme Names ──────────────────────────────────────────────
 
 export type ThemeName =
-  | "modern-purple"
-  | "ocean-blue"
-  | "forest-green"
-  | "warm-amber"
-  | "minimal-gray"
-  | "corporate"
+  "editorial-serif" | "clean-slate" | "forest-notebook" | "rose-gold" | "midnight-ink" | "catppuccin-mocha" | "obsidian-amber" | "nord-aurora"
 
 // ── Font Configuration ───────────────────────────────────────
 
@@ -49,6 +44,7 @@ export interface ColorConfig {
   tableHeaderBackground: string
   tableHeaderTextColor: string
   tableRowAlternateColor: string
+  tableBorderColor: string
   inlineCodeBackground: string
   inlineCodeTextColor: string
   pageBackgroundColor: string

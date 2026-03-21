@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Panel,
   Group,
@@ -8,7 +8,7 @@ import {
 } from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"
-import { useEditorStore } from "@/stores"
+import { useDocumentStore, useEditorStore } from "@/stores"
 import { useAutoSave } from "@/hooks/use-auto-save"
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
 import { Navbar } from "@/components/navbar"
@@ -21,6 +21,12 @@ import { EditorStatusBar } from "./editor-status-bar"
 export function EditorPage() {
   useAutoSave()
   useKeyboardShortcuts()
+
+  const fileName = useDocumentStore((s) => s.fileName)
+
+  useEffect(() => {
+    document.title = fileName || "InkDown"
+  }, [fileName])
 
   const viewMode = useEditorStore((s) => s.viewMode)
   const sidebarOpen = useEditorStore((s) => s.sidebarOpen)

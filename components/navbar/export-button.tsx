@@ -24,11 +24,10 @@ export function ExportButton({ className }: ExportButtonProps) {
   const documentStructure = useStyleStore((s) => s.documentStructure)
   const specialContent = useStyleStore((s) => s.specialContent)
 
+  const fileName = useDocumentStore((s) => s.fileName)
+
   const handleExportPdf = () => {
-    const prevTitle = document.title
-    document.title = "inkdown-export"
     window.print()
-    document.title = prevTitle
   }
 
   const handleExportMarkdown = () => {
@@ -36,7 +35,7 @@ export function ExportButton({ className }: ExportButtonProps) {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = "document.md"
+    a.download = `${fileName || "document"}.md`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -69,7 +68,7 @@ export function ExportButton({ className }: ExportButtonProps) {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = "document.html"
+    a.download = `${fileName || "document"}.html`
     a.click()
     URL.revokeObjectURL(url)
   }

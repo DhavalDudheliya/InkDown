@@ -12,8 +12,8 @@ interface PreviewPageProps {
   headerFooter: HeaderFooterSettings
   documentStructure: DocumentStructureSettings
   zoom: number
-  pageNumber: number
-  totalPages: number
+  pageNumber?: number
+  totalPages?: number
   className?: string
 }
 
@@ -23,7 +23,15 @@ interface PreviewPageProps {
  */
 export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
   function PreviewPage(
-    { html, headerFooter, documentStructure, zoom, pageNumber, totalPages, className },
+    { 
+      html, 
+      headerFooter, 
+      documentStructure, 
+      zoom, 
+      pageNumber = 1, 
+      totalPages = 1, 
+      className 
+    },
     ref
   ) {
     // Convert mm → px at 96 DPI (1mm ≈ 3.7795px)
@@ -116,13 +124,13 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
 
     return (
       <div
-        className={cn("flex shrink-0 justify-center", className)}
+        className={cn("", className)}
         style={{ width: widthPx * scale, minHeight: heightPx * scale }}
       >
         <div
           ref={ref}
           data-page={pageNumber}
-          className="preview-page-wrapper relative origin-top-left bg-white shadow-lg ring-1 ring-black/5 dark:bg-zinc-50"
+          className="preview-page-wrapper relative origin-top-left shadow-lg ring-1 ring-black/5"
           style={{
             width: widthPx,
             minHeight: heightPx,
