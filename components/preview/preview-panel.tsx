@@ -17,7 +17,6 @@ interface PreviewPanelProps {
 
 export function PreviewPanel({ className }: PreviewPanelProps) {
   const content = useDocumentStore((s) => s.content)
-  const pageLayout = useStyleStore((s) => s.pageLayout)
   const fonts = useStyleStore((s) => s.fonts)
   const colors = useStyleStore((s) => s.colors)
   const bodyText = useStyleStore((s) => s.bodyText)
@@ -91,7 +90,6 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
 
           <PreviewPage
             html={html}
-            pageLayout={pageLayout}
             headerFooter={headerFooter}
             documentStructure={documentStructure}
             zoom={zoom}

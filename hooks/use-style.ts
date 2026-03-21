@@ -7,7 +7,6 @@ export function useStyle() {
   const colors = useStyleStore((s) => s.colors)
   const bodyText = useStyleStore((s) => s.bodyText)
   const codeBlock = useStyleStore((s) => s.codeBlock)
-  const pageLayout = useStyleStore((s) => s.pageLayout)
   const headerFooter = useStyleStore((s) => s.headerFooter)
 
   const applyTheme = useStyleStore((s) => s.applyTheme)
@@ -17,7 +16,6 @@ export function useStyle() {
   const setHeadingColor = useStyleStore((s) => s.setHeadingColor)
   const setBodyText = useStyleStore((s) => s.setBodyText)
   const setCodeBlock = useStyleStore((s) => s.setCodeBlock)
-  const setPageLayout = useStyleStore((s) => s.setPageLayout)
   const setHeaderFooter = useStyleStore((s) => s.setHeaderFooter)
   const resetToDefaults = useStyleStore((s) => s.resetToDefaults)
 
@@ -28,7 +26,6 @@ export function useStyle() {
     colors,
     bodyText,
     codeBlock,
-    pageLayout,
     headerFooter,
     applyTheme,
     setFont,
@@ -37,7 +34,6 @@ export function useStyle() {
     setHeadingColor,
     setBodyText,
     setCodeBlock,
-    setPageLayout,
     setHeaderFooter,
     resetToDefaults,
   }

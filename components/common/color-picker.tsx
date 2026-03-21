@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import { HexColorPicker } from "react-colorful"
 
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
@@ -25,7 +26,6 @@ export function ColorPicker({
   className,
 }: ColorPickerProps) {
   const [localValue, setLocalValue] = useState(value)
-  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setLocalValue(value)
@@ -41,15 +41,6 @@ export function ColorPicker({
     [onChange]
   )
 
-  const handleNativeChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const hex = e.target.value
-      setLocalValue(hex)
-      onChange(hex)
-    },
-    [onChange]
-  )
-
   return (
     <div className={cn("flex items-center gap-2", className)}>
       {label && (
@@ -59,35 +50,35 @@ export function ColorPicker({
       )}
       <Popover>
         <PopoverTrigger
-          className="h-7 w-7 shrink-0 cursor-pointer rounded-md border border-border shadow-sm transition-shadow hover:shadow-md"
+          className="h-7 w-7 shrink-0 cursor-pointer rounded-md border border-border/60 shadow-xs transition-all hover:ring-2 hover:ring-primary/20 hover:scale-105"
           style={{ backgroundColor: value }}
           aria-label={`Color: ${value}`}
         />
-        <PopoverContent className="w-56 p-3" align="start">
+        <PopoverContent className="w-[200px] p-2.5 bg-card/98 border-border/50 shadow-xl backdrop-blur-sm" align="start">
           <div className="flex flex-col gap-3">
-            {/* Native color picker */}
-            <input
-              ref={inputRef}
-              type="color"
-              value={localValue}
-              onChange={handleNativeChange}
-              className="h-32 w-full cursor-pointer rounded-md border-0"
-            />
+            {/* Direct color picker */}
+            <div className="custom-color-picker overflow-hidden rounded-lg">
+              <HexColorPicker 
+                color={localValue} 
+                onChange={onChange}
+                style={{ width: '100%', height: '140px' }}
+              />
+            </div>
 
             {/* Hex input */}
-            <div className="flex items-center gap-2">
-              <Label className="text-xs">Hex</Label>
+            <div className="flex items-center gap-1.5 px-0.5">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-50 tracking-widest pt-0.5">Hex</span>
               <Input
                 value={localValue}
                 onChange={(e) => handleHexChange(e.target.value)}
-                className="h-7 font-mono text-xs"
+                className="h-7 font-mono text-xs bg-muted/30 border-border/40 text-center"
                 placeholder="#000000"
               />
             </div>
           </div>
         </PopoverContent>
       </Popover>
-      <span className="font-mono text-xs text-muted-foreground">
+      <span className="font-mono text-[10px] text-muted-foreground/80 tracking-tight">
         {value}
       </span>
     </div>

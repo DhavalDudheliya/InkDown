@@ -27,12 +27,12 @@ export function SliderField({
   className,
 }: SliderFieldProps) {
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
-      <div className="flex items-center justify-between gap-2">
-        <Label className="min-w-0 truncate text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+    <div className={cn("group flex flex-col gap-2 p-1", className)}>
+      <div className="flex items-start justify-between gap-1.5 min-w-0">
+        <Label className="mt-0.5 min-w-[32px] shrink-0 text-[11px] font-bold text-foreground/80 uppercase tracking-tight">
           {label}
         </Label>
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1 overflow-hidden rounded bg-muted/60 border border-border/40 px-1.5 py-0.5 shadow-xs">
           <Input
             type="number"
             value={value}
@@ -45,14 +45,14 @@ export function SliderField({
             min={min}
             max={max}
             step={step}
-            className="h-6 w-14 px-1 text-right font-mono text-[10px]"
+            className="h-4 w-10 border-none bg-transparent p-0 text-right font-mono text-[10px] transition-colors focus-visible:ring-0"
           />
           {unit && (
-            <span className="text-[10px] text-muted-foreground shrink-0">{unit}</span>
+            <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-70">{unit}</span>
           )}
         </div>
       </div>
-      <div className="px-0.5 py-1">
+      <div className="px-1">
         <Slider
           value={[value]}
           onValueChange={(val: number | readonly number[]) => onChange(Array.isArray(val) ? val[0] : val)}

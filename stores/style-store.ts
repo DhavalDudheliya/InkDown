@@ -4,7 +4,6 @@ import {
   DEFAULT_BODY_TEXT,
   DEFAULT_CODE_BLOCK,
   DEFAULT_HEADER_FOOTER,
-  DEFAULT_PAGE_LAYOUT,
   DEFAULT_DOCUMENT_STRUCTURE,
   DEFAULT_SPECIAL_CONTENT,
   DEFAULT_TABLE_CONFIG,
@@ -20,7 +19,6 @@ import type {
   HeaderFooterSettings,
   HeadingConfig,
   HeadingLevel,
-  PageLayout,
   ThemeName,
   DocumentStructureSettings,
   SpecialContentSettings,
@@ -39,9 +37,6 @@ export interface StyleState {
 
   // Code block
   codeBlock: CodeBlockConfig
-
-  // Page layout
-  pageLayout: PageLayout
 
   // Header & footer
   headerFooter: HeaderFooterSettings
@@ -79,9 +74,6 @@ export interface StyleActions {
   // Code block
   setCodeBlock: (config: Partial<CodeBlockConfig>) => void
 
-  // Page layout
-  setPageLayout: (config: Partial<PageLayout>) => void
-
   // Header & footer
   setHeaderFooter: (config: Partial<HeaderFooterSettings>) => void
 
@@ -109,7 +101,6 @@ function getInitialState(): StyleState {
     colors: { ...defaultTheme.colors },
     bodyText: { ...DEFAULT_BODY_TEXT },
     codeBlock: { ...DEFAULT_CODE_BLOCK },
-    pageLayout: { ...DEFAULT_PAGE_LAYOUT },
     headerFooter: { ...DEFAULT_HEADER_FOOTER },
     documentStructure: { ...DEFAULT_DOCUMENT_STRUCTURE },
     specialContent: { ...DEFAULT_SPECIAL_CONTENT },
@@ -183,12 +174,6 @@ export const useStyleStore = create<StyleState & StyleActions>((set) => ({
   setCodeBlock: (config) => {
     set((state) => ({
       codeBlock: { ...state.codeBlock, ...config },
-    }))
-  },
-
-  setPageLayout: (config) => {
-    set((state) => ({
-      pageLayout: { ...state.pageLayout, ...config },
     }))
   },
 

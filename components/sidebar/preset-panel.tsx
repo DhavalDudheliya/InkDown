@@ -26,7 +26,6 @@ export function PresetPanel() {
       colors: s.colors,
       bodyText: s.bodyText,
       codeBlock: s.codeBlock,
-      pageLayout: s.pageLayout,
       headerFooter: s.headerFooter,
       documentStructure: s.documentStructure,
       specialContent: s.specialContent,
@@ -83,23 +82,23 @@ export function PresetPanel() {
   }
 
   return (
-    <CollapsibleSection title="Presets & Profiles">
-      <div className="flex flex-col gap-6">
+    <CollapsibleSection title="Styles & Presets">
+      <div className="flex flex-col gap-3">
         
         {/* Save Current */}
-        <div className="flex flex-col gap-3">
-          <Label className="text-xs font-semibold">Save Current Style</Label>
-          <div className="flex gap-2">
+        <div className="flex flex-col gap-2 rounded-lg border border-border/40 bg-muted/20 p-3">
+          <Label className="mb-1 text-[11px] font-bold uppercase tracking-wider text-primary/80">Save Configuration</Label>
+          <div className="flex gap-2 pt-1">
             <Input
               value={newPresetName}
               onChange={(e) => setNewPresetName(e.target.value)}
-              placeholder="My Custom Theme..."
-              className="h-8 text-xs"
+              placeholder="e.g. My Modern Layout"
+              className="h-8 text-[11px] bg-background border-border/50"
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSaveToBrowser()
               }}
             />
-            <Button size="sm" onClick={handleSaveToBrowser} disabled={!newPresetName.trim()}>
+            <Button size="sm" onClick={handleSaveToBrowser} disabled={!newPresetName.trim()} className="h-8 w-8 p-0">
               <Save className="h-4 w-4" />
             </Button>
           </div>
@@ -107,16 +106,16 @@ export function PresetPanel() {
 
         {/* Saved Presets */}
         {savedPresets.length > 0 && (
-          <div className="flex flex-col gap-3">
-            <Label className="text-xs font-semibold">Saved Layouts</Label>
-            <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 rounded-lg border border-border/40 bg-muted/20 p-3">
+            <Label className="mb-1 text-[11px] font-bold uppercase tracking-wider text-primary/80">Saved Styles</Label>
+            <div className="flex flex-col gap-1.5 pt-1">
               {savedPresets.map((preset) => (
                 <div
                   key={preset.id}
-                  className="flex items-center justify-between rounded-md border bg-card px-3 py-2 text-sm shadow-sm"
+                  className="group flex items-center justify-between rounded-md border border-border/30 bg-background/50 px-2.5 py-1.5 text-[11px] transition-colors hover:border-primary/30"
                 >
                   <button
-                    className="flex-1 text-left font-medium hover:underline truncate"
+                    className="flex-1 text-left font-medium hover:text-primary truncate"
                     onClick={() => handleApplyPreset(preset.settings)}
                   >
                     {preset.name}
@@ -124,10 +123,10 @@ export function PresetPanel() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 text-destructive hover:bg-destructive/10"
+                    className="h-5 w-5 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => deletePreset(preset.id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>
               ))}
@@ -135,19 +134,19 @@ export function PresetPanel() {
           </div>
         )}
 
-        {/* Import / Export JSON */}
-        <div className="flex flex-col gap-3 border-t pt-4">
-          <Label className="text-xs font-semibold">Portable JSON</Label>
-          <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" size="sm" onClick={handleExportJson} className="w-full gap-2">
+        {/* Portability */}
+        <div className="flex flex-col gap-2 rounded-lg border border-border/40 bg-muted/20 p-3">
+          <Label className="mb-1 text-[11px] font-bold uppercase tracking-wider text-primary/80">Portability (JSON)</Label>
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <Button variant="outline" size="sm" onClick={handleExportJson} className="h-8 text-[10px] gap-1.5 border-border/50 bg-background">
               <Download className="h-3.5 w-3.5" />
-              Export
+              Store File
             </Button>
             
             <div className="relative w-full">
-              <Button variant="outline" size="sm" className="w-full gap-2 relative z-0">
+              <Button variant="outline" size="sm" className="w-full h-8 text-[10px] gap-1.5 border-border/50 bg-background relative z-0">
                 <Upload className="h-3.5 w-3.5" />
-                Import
+                Load File
               </Button>
               <input
                 type="file"

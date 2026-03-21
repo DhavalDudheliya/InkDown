@@ -54,28 +54,6 @@ export interface ColorConfig {
   pageBackgroundColor: string
 }
 
-// ── Page Layout ──────────────────────────────────────────────
-
-export type PageSize = "a4" | "letter" | "a5" | "legal"
-export type Orientation = "portrait" | "landscape"
-export type MarginPreset = "narrow" | "normal" | "wide" | "custom"
-
-export interface Margins {
-  top: number // mm
-  right: number // mm
-  bottom: number // mm
-  left: number // mm
-}
-
-export interface PageLayout {
-  size: PageSize
-  orientation: Orientation
-  margins: Margins
-  marginPreset: MarginPreset
-  maxContentWidth: number // mm, 0 = full width
-  twoColumn: boolean
-}
-
 // ── Header & Footer ─────────────────────────────────────────
 
 export type HeaderFooterSlotContent =

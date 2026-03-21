@@ -2,20 +2,10 @@ import type { CodeBlockConfig } from "@/types/code-block"
 import type {
   BodyTextConfig,
   HeaderFooterSettings,
-  PageLayout,
   DocumentStructureSettings,
   SpecialContentSettings,
   TableConfig,
 } from "@/types/style"
-
-export const DEFAULT_PAGE_LAYOUT: PageLayout = {
-  size: "a4",
-  orientation: "portrait",
-  margins: { top: 25.4, right: 25.4, bottom: 25.4, left: 25.4 },
-  marginPreset: "normal",
-  maxContentWidth: 0,
-  twoColumn: false,
-}
 
 export const DEFAULT_HEADER_FOOTER: HeaderFooterSettings = {
   header: {

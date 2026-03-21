@@ -4,12 +4,11 @@ import { forwardRef, useEffect } from "react"
 import mermaid from "mermaid"
 
 import { cn } from "@/lib/utils"
-import type { PageLayout, HeaderFooterSettings, HeaderFooterConfig, HeaderFooterSlotContent, DocumentStructureSettings } from "@/types/style"
-import { PAGE_SIZES } from "@/constants/page-sizes"
+import type { HeaderFooterSettings, HeaderFooterConfig, HeaderFooterSlotContent, DocumentStructureSettings } from "@/types/style"
+import { FIXED_PAGE_WIDTH, FIXED_PAGE_HEIGHT, FIXED_MARGINS } from "@/constants/page-sizes"
 
 interface PreviewPageProps {
   html: string
-  pageLayout: PageLayout
   headerFooter: HeaderFooterSettings
   documentStructure: DocumentStructureSettings
   zoom: number
@@ -24,20 +23,13 @@ interface PreviewPageProps {
  */
 export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
   function PreviewPage(
-    { html, pageLayout, headerFooter, documentStructure, zoom, pageNumber, totalPages, className },
+    { html, headerFooter, documentStructure, zoom, pageNumber, totalPages, className },
     ref
   ) {
-    const dimensions = PAGE_SIZES[pageLayout.size]
-    const isLandscape = pageLayout.orientation === "landscape"
-
-    // Physical dimensions in mm
-    const widthMm = isLandscape ? dimensions.height : dimensions.width
-    const heightMm = isLandscape ? dimensions.width : dimensions.height
-
     // Convert mm → px at 96 DPI (1mm ≈ 3.7795px)
     const MM_TO_PX = 3.7795
-    const widthPx = widthMm * MM_TO_PX
-    const heightPx = heightMm * MM_TO_PX
+    const widthPx = FIXED_PAGE_WIDTH * MM_TO_PX
+    const heightPx = FIXED_PAGE_HEIGHT * MM_TO_PX
 
     const scale = zoom / 100
 
@@ -119,8 +111,8 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
       )
     }
 
-    const paddingXSettings = pageLayout.margins.left * MM_TO_PX
-    const paddingRightSettings = pageLayout.margins.right * MM_TO_PX
+    const paddingXSettings = FIXED_MARGINS.left * MM_TO_PX
+    const paddingRightSettings = FIXED_MARGINS.right * MM_TO_PX
 
     return (
       <div
@@ -135,9 +127,9 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
             width: widthPx,
             minHeight: heightPx,
             transform: `scale(${scale})`,
-            paddingTop: `${pageLayout.margins.top * MM_TO_PX}px`,
+            paddingTop: `${FIXED_MARGINS.top * MM_TO_PX}px`,
             paddingRight: `${paddingRightSettings}px`,
-            paddingBottom: `${pageLayout.margins.bottom * MM_TO_PX}px`,
+            paddingBottom: `${FIXED_MARGINS.bottom * MM_TO_PX}px`,
             paddingLeft: `${paddingXSettings}px`,
           }}
         >
@@ -145,22 +137,14 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
           {renderHeaderFooter(
             headerFooter.header, 
             "header", 
-            pageLayout.margins.top, 
+            FIXED_MARGINS.top, 
             paddingXSettings, 
             paddingRightSettings
           )}
 
           {/* Rendered HTML content with conditional Cover Page */}
           <div
-            className={cn(
-              "preview-content h-full text-black",
-              // Support a two-column CSS layout if enabled
-              pageLayout.twoColumn ? "columns-2 gap-8" : "",
-            )}
-            style={{
-              maxWidth: pageLayout.maxContentWidth > 0 ? `${pageLayout.maxContentWidth * MM_TO_PX}px` : "none",
-              margin: pageLayout.maxContentWidth > 0 ? "0 auto" : "0"
-            }}
+            className="preview-content h-full text-black"
           >
             {documentStructure.coverPage.enabled && (
               <div 
@@ -189,7 +173,7 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
           {renderHeaderFooter(
             headerFooter.footer, 
             "footer", 
-            pageLayout.margins.bottom, 
+            FIXED_MARGINS.bottom, 
             paddingXSettings, 
             paddingRightSettings
           )}

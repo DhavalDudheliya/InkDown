@@ -181,6 +181,9 @@
 }
 
 @media print {
+  @page {
+    margin: 0;
+  }
   /* Use visibility trick: hide entire page, then opt-in specific elements.
      display:none on a parent would hide children even if they set display:block,
      but visibility:hidden lets children override with visibility:visible. */

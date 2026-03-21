@@ -4,6 +4,7 @@ import { useStyleStore } from "@/stores"
 import { CollapsibleSection } from "@/components/common"
 import { FontPicker, SliderField } from "@/components/common"
 import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Select,
   SelectContent,
@@ -53,13 +54,13 @@ export function TypographyPanel() {
         {FONT_ROLES.map(({ role, label }) => {
           const font = fonts[role]
           return (
-            <div key={role} className="flex flex-col gap-3 pb-2">
-              <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{label} Font</Label>
+            <div key={role} className="flex flex-col gap-2 rounded-lg border border-border/40 bg-muted/20 p-3">
+              <Label className="mb-1 text-[11px] font-bold uppercase tracking-wider text-primary/80">{label} Font</Label>
               <FontPicker
                 value={font.family}
                 onChange={(family) => setFont(role, { family })}
               />
-              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
+              <div className="flex flex-col gap-1">
                 <SliderField
                   label="Size"
                   value={font.size}
@@ -76,10 +77,8 @@ export function TypographyPanel() {
                   max={3}
                   step={0.1}
                 />
-              </div>
-              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
                 <SliderField
-                  label="Letter Spacing"
+                  label="Letter Gap"
                   value={font.letterSpacing}
                   onChange={(letterSpacing) =>
                     setFont(role, { letterSpacing })
@@ -89,9 +88,9 @@ export function TypographyPanel() {
                   step={0.01}
                   unit="em"
                 />
-                <div className="flex flex-col gap-1.5">
-                  <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                    Weight
+                <div className="flex flex-col gap-1.5 p-1 w-full">
+                  <Label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-tight">
+                    Font Weight
                   </Label>
                   <Select
                     value={String(font.weight)}
@@ -99,8 +98,10 @@ export function TypographyPanel() {
                       setFont(role, { weight: Number(v) })
                     }
                   >
-                    <SelectTrigger className="h-6 w-full text-[10px] font-mono">
-                      <SelectValue />
+                    <SelectTrigger className="h-7 w-full text-[10px] bg-muted/50 px-2 justify-between">
+                      <SelectValue>
+                        {FONT_WEIGHTS.find(w => w.value === font.weight)?.label || font.weight}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {FONT_WEIGHTS.map((w) => (
@@ -120,9 +121,9 @@ export function TypographyPanel() {
         <div className="h-px bg-border" />
 
         {/* Heading overrides */}
-        <div className="flex flex-col gap-3">
-          <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Heading Sizes</Label>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-4">
+        <div className="flex flex-col gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
+          <Label className="text-[11px] font-bold uppercase tracking-wider text-primary/80">Heading Sizes</Label>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
             {HEADING_LEVELS.map(({ level, label }) => (
               <SliderField
                 key={level}
@@ -137,14 +138,11 @@ export function TypographyPanel() {
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="h-px bg-border" />
-
         {/* Body text settings */}
-        <div className="flex flex-col gap-3">
-          <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Body Text</Label>
+        <div className="flex flex-col gap-3 rounded-lg border border-border/40 bg-muted/20 p-3">
+          <Label className="text-[11px] font-bold uppercase tracking-wider text-primary/80">Body Layout</Label>
           <SliderField
-            label="Paragraph Spacing"
+            label="Para Spacing"
             value={bodyText.paragraphSpacing}
             onChange={(paragraphSpacing) =>
               setBodyText({ paragraphSpacing })
@@ -153,10 +151,10 @@ export function TypographyPanel() {
             max={32}
             unit="px"
           />
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex flex-col gap-1">
-              <Label className="text-xs text-muted-foreground">
-                Alignment
+          <div className="flex flex-col gap-3 pt-1">
+            <div className="flex flex-col gap-1.5 px-1">
+              <Label className="text-[10px] font-semibold text-muted-foreground">
+                Text Alignment
               </Label>
               <Select
                 value={bodyText.textAlignment}
@@ -166,28 +164,29 @@ export function TypographyPanel() {
                   })
                 }
               >
-                <SelectTrigger className="h-7 text-xs">
-                  <SelectValue />
+                <SelectTrigger className="h-7 w-full text-[10px] bg-muted/60 border-border/40">
+                  <SelectValue>
+                    {bodyText.textAlignment === "left" ? "Left Align" : "Justify Text"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="left">Left</SelectItem>
-                  <SelectItem value="justify">Justify</SelectItem>
+                  <SelectItem value="left" className="text-xs">Left Align</SelectItem>
+                  <SelectItem value="justify" className="text-xs">Justify Text</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-end gap-2 pb-0.5">
-              <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <input
-                  type="checkbox"
-                  checked={bodyText.firstLineIndent}
-                  onChange={(e) =>
-                    setBodyText({ firstLineIndent: e.target.checked })
-                  }
-                  className="rounded"
-                />
-                First line indent
-              </label>
-            </div>
+            
+            <div className="h-px bg-border/20 my-1 mx-1" />
+
+            <label className="flex items-center justify-between px-1 cursor-pointer select-none group">
+              <span className="text-[11px] font-medium text-foreground/80 italic tracking-tight">Indent first line</span>
+              <Checkbox
+                checked={bodyText.firstLineIndent}
+                onCheckedChange={(checked) =>
+                  setBodyText({ firstLineIndent: checked as boolean })
+                }
+              />
+            </label>
           </div>
         </div>
       </div>
