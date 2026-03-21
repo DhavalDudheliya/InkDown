@@ -51,7 +51,7 @@ export function EditorPage() {
       </div>
 
       {/* Main workspace */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden print:overflow-visible">
         {/* Editor + Preview panels */}
         <Group orientation="horizontal" className="flex-1">
           {/* Editor panel */}

@@ -182,11 +182,10 @@
 
 @media print {
   @page {
-    margin: 0;
+    margin: 8mm;
   }
-  /* Use visibility trick: hide entire page, then opt-in specific elements.
-     display:none on a parent would hide children even if they set display:block,
-     but visibility:hidden lets children override with visibility:visible. */
+
+  /* Reset all elements to hidden first */
   body * {
     visibility: hidden;
   }
@@ -197,26 +196,32 @@
     visibility: visible;
   }
 
-  /* Position the first page at the top-left of the print surface */
+  /* Ensure the wrapper is placed at the top-left of the printable area */
   .preview-page-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 100% !important;
     height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
     transform: none !important;
     box-shadow: none !important;
-    margin: 0 !important;
-    break-after: page;
+    border: none !important;
   }
 
-  .preview-page-wrapper:last-child {
-    break-after: avoid;
-  }
-
+  /* Global print resets */
   html,
   body {
     margin: 0 !important;
     padding: 0 !important;
+    background: white !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Handle page breaks for cover pages */
+  .break-after-page {
+    break-after: page;
   }
 }

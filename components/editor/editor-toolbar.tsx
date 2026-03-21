@@ -24,10 +24,26 @@ interface EditorToolbarProps {
   className?: string
 }
 
-const VIEW_MODE_ITEMS: { mode: ViewMode; icon: React.ReactNode; label: string }[] = [
-  { mode: "split", icon: <Columns2 className="h-4 w-4" />, label: "Split View" },
-  { mode: "editor", icon: <PanelLeft className="h-4 w-4" />, label: "Editor Only" },
-  { mode: "preview", icon: <PanelRight className="h-4 w-4" />, label: "Preview Only" },
+const VIEW_MODE_ITEMS: {
+  mode: ViewMode
+  icon: React.ReactNode
+  label: string
+}[] = [
+  {
+    mode: "split",
+    icon: <Columns2 className="h-4 w-4" />,
+    label: "Split View",
+  },
+  {
+    mode: "editor",
+    icon: <PanelLeft className="h-4 w-4" />,
+    label: "Editor Only",
+  },
+  {
+    mode: "preview",
+    icon: <PanelRight className="h-4 w-4" />,
+    label: "Preview Only",
+  },
 ]
 
 export function EditorToolbar({ className }: EditorToolbarProps) {
@@ -49,37 +65,15 @@ export function EditorToolbar({ className }: EditorToolbarProps) {
     >
       {/* Undo / Redo */}
       <div className="flex items-center gap-0.5">
-        <Tooltip>
-          <TooltipTrigger
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
-            onClick={undo}
-            disabled={undoStack.length === 0}
-          >
-            <Undo2 className="h-3.5 w-3.5" />
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <span>Undo</span>
-            <kbd className="ml-1.5 rounded border border-border px-1 py-0.5 text-[10px]">
-              Ctrl+Z
-            </kbd>
-          </TooltipContent>
-        </Tooltip>
+        <span>Undo</span>
+        <kbd className="ml-1.5 rounded border border-border px-1 py-0.5 text-[10px]">
+          Ctrl+Z
+        </kbd>
 
-        <Tooltip>
-          <TooltipTrigger
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
-            onClick={redo}
-            disabled={redoStack.length === 0}
-          >
-            <Redo2 className="h-3.5 w-3.5" />
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <span>Redo</span>
-            <kbd className="ml-1.5 rounded border border-border px-1 py-0.5 text-[10px]">
-              Ctrl+Y
-            </kbd>
-          </TooltipContent>
-        </Tooltip>
+        <span>Redo</span>
+        <kbd className="ml-1.5 rounded border border-border px-1 py-0.5 text-[10px]">
+          Ctrl+Y
+        </kbd>
       </div>
 
       {/* Divider */}
