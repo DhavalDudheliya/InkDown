@@ -26,6 +26,7 @@ import { FileImportDialog } from "@/components/editor/file-import-dialog"
 
 import { FileNameInput } from "./file-name-input"
 import { ExportButton } from "./export-button"
+import { GithubStarButton } from "./github-star-button"
 
 import type { ViewMode } from "@/stores/editor-store"
 
@@ -168,7 +169,7 @@ export function Navbar({ className }: NavbarProps) {
 
       {/* Right section */}
       <div className="flex items-center gap-1.5">
-        <FileImportDialog />
+        <GithubStarButton />
 
         {/* Dark mode toggle */}
         <NavIconButton
@@ -196,6 +197,10 @@ export function Navbar({ className }: NavbarProps) {
           )}
         </NavIconButton>
 
+        <div className="mx-1 h-5 w-px bg-border" />
+
+        <FileImportDialog />
+        
         <div className="mx-1 h-5 w-px bg-border" />
 
         {/* Export button */}
