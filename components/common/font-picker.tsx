@@ -51,28 +51,32 @@ export function FontPicker({
       )}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
-          className="w-full"
-          style={{ fontFamily: value }}
-        >
-          <Button variant="outline" className="w-full justify-between">
-            <span className="truncate">{value}</span>
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              className="ml-2 shrink-0 opacity-50"
+          render={(props) => (
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              style={{ fontFamily: value }}
+              {...props}
             >
-              <path
-                d="M3 4.5L6 7.5L9 4.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        </PopoverTrigger>
+              <span className="truncate">{value}</span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                className="ml-2 shrink-0 opacity-50"
+              >
+                <path
+                  d="M3 4.5L6 7.5L9 4.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Button>
+          )}
+        />
         <PopoverContent className="w-64 p-0" align="start">
           <div className="border-b p-2">
             <Input

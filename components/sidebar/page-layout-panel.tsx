@@ -57,7 +57,7 @@ export function PageLayoutPanel() {
               value={pageLayout.size}
               onValueChange={(v) => setPageLayout({ size: v as PageSize })}
             >
-              <SelectTrigger className="h-7 text-xs">
+              <SelectTrigger className="h-7 w-full text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -108,7 +108,7 @@ export function PageLayoutPanel() {
               value={pageLayout.marginPreset}
               onValueChange={(v) => handleMarginPresetChange(v as MarginPreset)}
             >
-              <SelectTrigger className="h-7 text-xs">
+              <SelectTrigger className="h-7 w-full text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

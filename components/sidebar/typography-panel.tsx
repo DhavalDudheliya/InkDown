@@ -53,13 +53,13 @@ export function TypographyPanel() {
         {FONT_ROLES.map(({ role, label }) => {
           const font = fonts[role]
           return (
-            <div key={role} className="flex flex-col gap-2">
-              <Label className="text-xs font-medium">{label} Font</Label>
+            <div key={role} className="flex flex-col gap-3 pb-2">
+              <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{label} Font</Label>
               <FontPicker
                 value={font.family}
                 onChange={(family) => setFont(role, { family })}
               />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
                 <SliderField
                   label="Size"
                   value={font.size}
@@ -77,7 +77,7 @@ export function TypographyPanel() {
                   step={0.1}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
                 <SliderField
                   label="Letter Spacing"
                   value={font.letterSpacing}
@@ -89,8 +89,8 @@ export function TypographyPanel() {
                   step={0.01}
                   unit="em"
                 />
-                <div className="flex flex-col gap-1">
-                  <Label className="text-xs text-muted-foreground">
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
                     Weight
                   </Label>
                   <Select
@@ -99,12 +99,12 @@ export function TypographyPanel() {
                       setFont(role, { weight: Number(v) })
                     }
                   >
-                    <SelectTrigger className="h-7 text-xs">
+                    <SelectTrigger className="h-6 w-full text-[10px] font-mono">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {FONT_WEIGHTS.map((w) => (
-                        <SelectItem key={w.value} value={String(w.value)}>
+                        <SelectItem key={w.value} value={String(w.value)} className="text-xs">
                           {w.label}
                         </SelectItem>
                       ))}
@@ -120,9 +120,9 @@ export function TypographyPanel() {
         <div className="h-px bg-border" />
 
         {/* Heading overrides */}
-        <div className="flex flex-col gap-2">
-          <Label className="text-xs font-medium">Heading Sizes</Label>
-          <div className="grid grid-cols-3 gap-2">
+        <div className="flex flex-col gap-3">
+          <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Heading Sizes</Label>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-4">
             {HEADING_LEVELS.map(({ level, label }) => (
               <SliderField
                 key={level}
@@ -141,8 +141,8 @@ export function TypographyPanel() {
         <div className="h-px bg-border" />
 
         {/* Body text settings */}
-        <div className="flex flex-col gap-2">
-          <Label className="text-xs font-medium">Body Text</Label>
+        <div className="flex flex-col gap-3">
+          <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Body Text</Label>
           <SliderField
             label="Paragraph Spacing"
             value={bodyText.paragraphSpacing}

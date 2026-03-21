@@ -179,3 +179,42 @@
     letter-spacing: var(--tracking-normal);
   }
 }
+
+@media print {
+  /* Use visibility trick: hide entire page, then opt-in specific elements.
+     display:none on a parent would hide children even if they set display:block,
+     but visibility:hidden lets children override with visibility:visible. */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only the preview page wrappers and everything inside them */
+  .preview-page-wrapper,
+  .preview-page-wrapper * {
+    visibility: visible;
+  }
+
+  /* Position the first page at the top-left of the print surface */
+  .preview-page-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    break-after: page;
+  }
+
+  .preview-page-wrapper:last-child {
+    break-after: avoid;
+  }
+
+  html,
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
