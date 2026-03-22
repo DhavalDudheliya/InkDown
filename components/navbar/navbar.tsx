@@ -11,8 +11,9 @@ import {
   Focus,
   Undo2,
   Redo2,
+  HelpCircle,
 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
 
 import { cn } from "@/lib/utils"
@@ -28,6 +29,7 @@ import { FileImportDialog } from "@/components/editor/file-import-dialog"
 import { FileNameInput } from "./file-name-input"
 import { ExportButton } from "./export-button"
 import { GithubStarButton } from "./github-star-button"
+import { useTour } from "@/hooks/use-tour"
 
 import type { ViewMode } from "@/stores/editor-store"
 
@@ -90,11 +92,11 @@ function NavIconButton({
 
 export function Navbar({ className }: NavbarProps) {
   const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = useSyncExternalStore(
+    useCallback(() => () => {}, []),
+    () => true,
+    () => false
+  )
   const undoStack = useDocumentStore((s) => s.undoStack)
   const redoStack = useDocumentStore((s) => s.redoStack)
   const undo = useDocumentStore((s) => s.undo)
@@ -105,6 +107,8 @@ export function Navbar({ className }: NavbarProps) {
   const toggleSidebar = useEditorStore((s) => s.toggleSidebar)
   const focusMode = useEditorStore((s) => s.focusMode)
   const toggleFocusMode = useEditorStore((s) => s.toggleFocusMode)
+
+  const { startTour } = useTour()
 
   return (
     <nav
@@ -122,27 +126,31 @@ export function Navbar({ className }: NavbarProps) {
 
       {/* Center section */}
       <div className="flex items-center gap-1">
-        {/* Undo / Redo */}
-        <NavIconButton
-          onClick={undo}
-          disabled={undoStack.length === 0}
-          tooltip="Undo (Ctrl+Z)"
-        >
-          <Undo2 className="h-4 w-4" />
-        </NavIconButton>
+        <div id="tour-undo-redo" className="flex items-center gap-1">
+          <NavIconButton
+            onClick={undo}
+            disabled={undoStack.length === 0}
+            tooltip="Undo (Ctrl+Z)"
+          >
+            <Undo2 className="h-4 w-4" />
+          </NavIconButton>
 
-        <NavIconButton
-          onClick={redo}
-          disabled={redoStack.length === 0}
-          tooltip="Redo (Ctrl+Y)"
-        >
-          <Redo2 className="h-4 w-4" />
-        </NavIconButton>
+          <NavIconButton
+            onClick={redo}
+            disabled={redoStack.length === 0}
+            tooltip="Redo (Ctrl+Y)"
+          >
+            <Redo2 className="h-4 w-4" />
+          </NavIconButton>
+        </div>
 
         <div className="mx-1 h-5 w-px bg-border" />
 
         {/* View mode toggle */}
-        <div className="flex items-center gap-0.5 rounded-lg bg-muted p-0.5">
+        <div
+          id="tour-view-modes"
+          className="flex items-center gap-0.5 rounded-lg bg-muted p-0.5"
+        >
           {VIEW_MODE_ITEMS.map((item) => (
             <Tooltip key={item.mode}>
               <TooltipTrigger
@@ -178,35 +186,45 @@ export function Navbar({ className }: NavbarProps) {
         <GithubStarButton />
 
         {/* Dark mode toggle */}
-        <NavIconButton
-          onClick={() =>
-            setTheme(resolvedTheme === "dark" ? "light" : "dark")
-          }
-          tooltip="Toggle Dark Mode"
-        >
-          {!mounted || resolvedTheme !== "dark" ? (
-            <Moon className="h-4 w-4" />
-          ) : (
-            <Sun className="h-4 w-4" />
-          )}
-        </NavIconButton>
+        <div id="tour-theme-toggle" className="flex items-center">
+          <NavIconButton
+            onClick={() =>
+              setTheme(resolvedTheme === "dark" ? "light" : "dark")
+            }
+            tooltip="Toggle Dark Mode"
+          >
+            {!mounted || resolvedTheme !== "dark" ? (
+              <Moon className="h-4 w-4" />
+            ) : (
+              <Sun className="h-4 w-4" />
+            )}
+          </NavIconButton>
+        </div>
 
         {/* Sidebar toggle */}
-        <NavIconButton
-          onClick={toggleSidebar}
-          tooltip="Toggle Sidebar (Ctrl+\\)"
-        >
-          {sidebarOpen ? (
-            <PanelRightClose className="h-4 w-4" />
-          ) : (
-            <PanelRightOpen className="h-4 w-4" />
-          )}
-        </NavIconButton>
+        <div id="tour-sidebar-toggle" className="flex items-center">
+          <NavIconButton
+            onClick={toggleSidebar}
+            tooltip="Toggle Sidebar (Ctrl+\\)"
+          >
+            {sidebarOpen ? (
+              <PanelRightClose className="h-4 w-4" />
+            ) : (
+              <PanelRightOpen className="h-4 w-4" />
+            )}
+          </NavIconButton>
+        </div>
+
+        <div id="tour-help" className="flex items-center">
+          <NavIconButton onClick={startTour} tooltip="Take a Tour">
+            <HelpCircle className="h-4 w-4" />
+          </NavIconButton>
+        </div>
 
         <div className="mx-1 h-5 w-px bg-border" />
 
         <FileImportDialog />
-        
+
         <div className="mx-1 h-5 w-px bg-border" />
 
         {/* Export button */}

@@ -1,12 +1,7 @@
 "use client"
 
 import { useCallback, useRef, useState } from "react"
-import {
-  Upload,
-  FileText,
-  Link2,
-  X,
-} from "lucide-react"
+import { Upload, FileText, Link2, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useDocumentStore } from "@/stores"
@@ -23,11 +18,10 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface FileImportDialogProps {
-  trigger?: React.ReactNode
   className?: string
 }
 
-export function FileImportDialog({ trigger, className }: FileImportDialogProps) {
+export function FileImportDialog({ className }: FileImportDialogProps) {
   const [open, setOpen] = useState(false)
   const [urlValue, setUrlValue] = useState("")
   const [isDragging, setIsDragging] = useState(false)
@@ -38,7 +32,11 @@ export function FileImportDialog({ trigger, className }: FileImportDialogProps) 
   const handleFile = useCallback(
     async (file: File) => {
       setError(null)
-      if (!file.name.endsWith(".md") && !file.name.endsWith(".txt") && !file.name.endsWith(".markdown")) {
+      if (
+        !file.name.endsWith(".md") &&
+        !file.name.endsWith(".txt") &&
+        !file.name.endsWith(".markdown")
+      ) {
         setError("Only .md, .txt, and .markdown files are supported.")
         return
       }
@@ -94,19 +92,26 @@ export function FileImportDialog({ trigger, className }: FileImportDialogProps) 
       if (!res.ok) throw new Error("Failed to fetch URL")
       const text = await res.text()
       const urlObj = new URL(urlValue.trim())
-      const name = urlObj.pathname.split("/").pop()?.replace(/\.(md|txt|markdown)$/, "") || "Imported"
+      const name =
+        urlObj.pathname
+          .split("/")
+          .pop()
+          ?.replace(/\.(md|txt|markdown)$/, "") || "Imported"
       loadDocument(name, text)
       setOpen(false)
     } catch {
-      setError("Failed to import from URL. Make sure it's a publicly accessible raw Markdown file.")
+      setError(
+        "Failed to import from URL. Make sure it's a publicly accessible raw Markdown file."
+      )
     }
   }, [urlValue, loadDocument])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
+        id="tour-import"
         className={cn(
-          "inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer",
+          "inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
           className
         )}
       >

@@ -1,13 +1,41 @@
 "use client"
 
 import { useCallback, useEffect, useRef } from "react"
-import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor, highlightSpecialChars, dropCursor } from "@codemirror/view"
+import {
+  EditorView,
+  keymap,
+  lineNumbers,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  drawSelection,
+  rectangularSelection,
+  crosshairCursor,
+  highlightSpecialChars,
+  dropCursor,
+} from "@codemirror/view"
 import { EditorState, Compartment } from "@codemirror/state"
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown"
-import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands"
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentWithTab,
+} from "@codemirror/commands"
 import { searchKeymap, highlightSelectionMatches } from "@codemirror/search"
-import { syntaxHighlighting, defaultHighlightStyle, bracketMatching, foldGutter, foldKeymap, indentOnInput } from "@codemirror/language"
-import { closeBrackets, closeBracketsKeymap, autocompletion, completionKeymap } from "@codemirror/autocomplete"
+import {
+  syntaxHighlighting,
+  defaultHighlightStyle,
+  bracketMatching,
+  foldGutter,
+  foldKeymap,
+  indentOnInput,
+} from "@codemirror/language"
+import {
+  closeBrackets,
+  closeBracketsKeymap,
+  autocompletion,
+  completionKeymap,
+} from "@codemirror/autocomplete"
 
 import { cn } from "@/lib/utils"
 import { useDocumentStore } from "@/stores"
@@ -94,14 +122,10 @@ export function MarkdownEditor({ className, onStats }: MarkdownEditorProps) {
       doc: content,
       extensions: [
         // Line numbers (compartment for toggling)
-        lineNumbersCompartment.current.of(
-          showLineNumbers ? lineNumbers() : []
-        ),
+        lineNumbersCompartment.current.of(showLineNumbers ? lineNumbers() : []),
 
         // Word wrap (compartment for toggling)
-        wordWrapCompartment.current.of(
-          wordWrap ? EditorView.lineWrapping : []
-        ),
+        wordWrapCompartment.current.of(wordWrap ? EditorView.lineWrapping : []),
 
         // Tab size (compartment for changing)
         tabSizeCompartment.current.of(EditorState.tabSize.of(tabSize)),
@@ -170,13 +194,15 @@ export function MarkdownEditor({ className, onStats }: MarkdownEditorProps) {
             color: "var(--color-foreground)",
           },
           ".cm-activeLine": {
-            backgroundColor: "color-mix(in oklch, var(--color-accent) 30%, transparent)",
+            backgroundColor:
+              "color-mix(in oklch, var(--color-accent) 30%, transparent)",
           },
           "&.cm-focused .cm-cursor": {
             borderLeftColor: "var(--color-primary)",
           },
           "&.cm-focused .cm-selectionBackground, ::selection": {
-            backgroundColor: "color-mix(in oklch, var(--color-primary) 20%, transparent)",
+            backgroundColor:
+              "color-mix(in oklch, var(--color-primary) 20%, transparent)",
           },
           ".cm-foldPlaceholder": {
             backgroundColor: "var(--color-muted)",
@@ -262,6 +288,7 @@ export function MarkdownEditor({ className, onStats }: MarkdownEditorProps) {
 
   return (
     <div
+      id="tour-editor"
       ref={containerRef}
       className={cn("flex-1 overflow-hidden [&_.cm-editor]:h-full", className)}
     />

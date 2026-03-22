@@ -42,8 +42,13 @@ export function ExportButton({ className }: ExportButtonProps) {
 
   const handleExportHtml = async () => {
     // Generate the raw HTML output (without CSS for now, or we can fetch CSS)
-    const htmlOutput = await parseMarkdown(content, codeBlock, documentStructure, specialContent)
-    
+    const htmlOutput = await parseMarkdown(
+      content,
+      codeBlock,
+      documentStructure,
+      specialContent
+    )
+
     // Minimal HTML wrapper for code viewing... (keeping this identical for now)
     const fullHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -75,7 +80,10 @@ export function ExportButton({ className }: ExportButtonProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={cn(buttonVariants({ size: "sm" }), className)}>
+      <DropdownMenuTrigger
+        id="tour-export"
+        className={cn(buttonVariants({ size: "sm" }), className)}
+      >
         <Download className="mr-2 h-4 w-4" />
         Export
       </DropdownMenuTrigger>
