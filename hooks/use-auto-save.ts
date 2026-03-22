@@ -11,6 +11,7 @@ export function useAutoSave() {
   const fileName = useDocumentStore((s) => s.fileName)
   const isDirty = useDocumentStore((s) => s.isDirty)
   const loadDocument = useDocumentStore((s) => s.loadDocument)
+  const setDirty = useDocumentStore((s) => s.setDirty)
   const hasRestoredRef = useRef(false)
 
   // Restore on first mount
@@ -24,26 +25,28 @@ export function useAutoSave() {
       if (savedContent) {
         loadDocument(savedFileName || "Untitled", savedContent)
       }
-    } catch {
-      // localStorage may be unavailable
+    } catch (err) {
+      console.error("Auto-save restoration failed:", err)
     }
   }, [loadDocument])
 
-  // Auto-save on interval
+  // Auto-save when content changes (debounced)
   useEffect(() => {
     if (!isDirty) return
 
-    const timer = setInterval(() => {
+    const timer = setTimeout(() => {
       try {
         localStorage.setItem(AUTO_SAVE_KEY, content)
         localStorage.setItem(AUTO_SAVE_FILENAME_KEY, fileName)
-      } catch {
-        // localStorage may be full or unavailable
+        setDirty(false)
+      } catch (err) {
+        console.error("Auto-save failed (possibly quota exceeded):", err)
+        // Keep isDirty as true so the user knows it's NOT saved
       }
-    }, AUTO_SAVE_INTERVAL)
+    }, 1500) // Save after 1.5 seconds of inactivity
 
-    return () => clearInterval(timer)
-  }, [content, fileName, isDirty])
+    return () => clearTimeout(timer)
+  }, [content, fileName, isDirty, setDirty])
 }
 
 export function clearAutoSave() {

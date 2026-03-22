@@ -16,6 +16,7 @@ interface DocumentActions {
   redo: () => void
   loadDocument: (fileName: string, content: string) => void
   clearDocument: () => void
+  setDirty: (isDirty: boolean) => void
 }
 
 const DEFAULT_CONTENT = `# Welcome to InkDown
@@ -141,6 +142,10 @@ export const useDocumentStore = create<DocumentState & DocumentActions>(
         redoStack: [],
         isDirty: false,
       })
+    },
+
+    setDirty: (isDirty) => {
+      set({ isDirty })
     },
   })
 )
