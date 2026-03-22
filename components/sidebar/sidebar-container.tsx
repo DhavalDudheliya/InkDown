@@ -30,6 +30,7 @@ export function SidebarContainer({ className }: SidebarContainerProps) {
 
   return (
     <div
+      id="tour-sidebar"
       className={cn(
         "flex h-full w-72 shrink-0 flex-col overflow-hidden border-l border-border bg-background",
         className

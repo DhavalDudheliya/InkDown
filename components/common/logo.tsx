@@ -14,15 +14,11 @@ const sizeMap = {
   lg: { icon: 32, text: "text-xl" },
 }
 
-export function Logo({
-  className,
-  size = "md",
-  showText = true,
-}: LogoProps) {
+export function Logo({ className, size = "md", showText = true }: LogoProps) {
   const { icon, text } = sizeMap[size]
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div id="tour-logo" className={cn("flex items-center gap-2", className)}>
       <svg
         width={icon}
         height={icon}
@@ -38,17 +34,9 @@ export function Logo({
           strokeLinejoin="round"
         />
         {/* Pen tip */}
-        <path
-          d="M4 24L3 29L8 28L4 24Z"
-          className="fill-primary/80"
-        />
+        <path d="M4 24L3 29L8 28L4 24Z" className="fill-primary/80" />
         {/* Ink drop */}
-        <circle
-          cx="24"
-          cy="24"
-          r="4"
-          className="fill-primary/60"
-        />
+        <circle cx="24" cy="24" r="4" className="fill-primary/60" />
         {/* Highlight line */}
         <path
           d="M12 22L22 8"
@@ -59,10 +47,7 @@ export function Logo({
       </svg>
       {showText && (
         <span
-          className={cn(
-            "font-semibold tracking-tight text-foreground",
-            text
-          )}
+          className={cn("font-semibold tracking-tight text-foreground", text)}
         >
           InkDown
         </span>

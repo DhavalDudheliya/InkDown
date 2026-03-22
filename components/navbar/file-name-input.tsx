@@ -69,6 +69,7 @@ export function FileNameInput({ className }: FileNameInputProps) {
 
   return (
     <button
+      id="tour-file-name"
       className={cn(
         "group flex items-center gap-1.5 rounded-md px-2 py-1 text-sm transition-colors hover:bg-muted",
         className
@@ -77,7 +78,10 @@ export function FileNameInput({ className }: FileNameInputProps) {
     >
       <span className="max-w-48 truncate font-medium">{fileName}</span>
       {isDirty && (
-        <span className="h-1.5 w-1.5 rounded-full bg-primary" title="Unsaved changes" />
+        <span
+          className="h-1.5 w-1.5 rounded-full bg-primary"
+          title="Unsaved changes"
+        />
       )}
       <Pencil className="h-3 w-3 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
     </button>

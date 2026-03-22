@@ -6,8 +6,6 @@ import { cn } from "@/lib/utils"
 import { useDocumentStore, useStyleStore, useEditorStore } from "@/stores"
 import { useDebounce } from "@/hooks/use-debounce"
 import { parseMarkdown } from "@/lib/markdown-parser"
-import { ScrollArea } from "@/components/ui/scroll-area"
-
 import { PreviewPage } from "./preview-page"
 import { PreviewToolbar, ZOOM_LEVELS } from "./preview-toolbar"
 
@@ -31,21 +29,23 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
   const debouncedContent = useDebounce(content, 300)
   const [html, setHtml] = useState("")
   const [zoom, setZoom] = useState(100)
+  const [prevSidebarOpen, setPrevSidebarOpen] = useState(sidebarOpen)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  // Auto-zoom based on sidebar state
-  useEffect(() => {
-    if (sidebarOpen) {
-      setZoom(75)
-    } else {
-      setZoom(100)
-    }
-  }, [sidebarOpen])
+  if (sidebarOpen !== prevSidebarOpen) {
+    setPrevSidebarOpen(sidebarOpen)
+    setZoom(sidebarOpen ? 75 : 100)
+  }
 
   // Parse markdown when content changes
   useEffect(() => {
     let cancelled = false
-    parseMarkdown(debouncedContent, codeBlock, documentStructure, specialContent).then((result) => {
+    parseMarkdown(
+      debouncedContent,
+      codeBlock,
+      documentStructure,
+      specialContent
+    ).then((result) => {
       if (!cancelled) setHtml(result)
     })
     return () => {
@@ -55,21 +55,23 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
 
   // Load selected fonts from Google Fonts
   useEffect(() => {
-    const families = new Set([
-      fonts.body.family,
-      fonts.heading.family,
-      fonts.monospace.family,
-      codeBlock.fontFamily !== "default" ? codeBlock.fontFamily : null,
-    ].filter(Boolean) as string[])
+    const families = new Set(
+      [
+        fonts.body.family,
+        fonts.heading.family,
+        fonts.monospace.family,
+        codeBlock.fontFamily !== "default" ? codeBlock.fontFamily : null,
+      ].filter(Boolean) as string[]
+    )
 
     const familiesParam = Array.from(families)
-      .map(f => f.replace(/ /g, "+"))
-      .map(f => `family=${f}:wght@300;400;500;600;700;800;900`)
+      .map((f) => f.replace(/ /g, "+"))
+      .map((f) => `family=${f}:wght@300;400;500;600;700;800;900`)
       .join("&")
 
     const linkId = "google-fonts-link"
     let link = document.getElementById(linkId) as HTMLLinkElement
-    
+
     if (!link) {
       link = document.createElement("link")
       link.id = linkId
@@ -106,10 +108,23 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
   }, [])
 
   // Build inline styles based on store state
-  const previewStyles = buildPreviewStyles(fonts, colors, bodyText, headings, tableConfig, codeBlock)
+  const previewStyles = buildPreviewStyles(
+    fonts,
+    colors,
+    bodyText,
+    headings,
+    tableConfig,
+    codeBlock
+  )
 
   return (
-    <div className={cn("flex h-full flex-col print:h-auto print:overflow-visible", className)}>
+    <div
+      id="tour-preview"
+      className={cn(
+        "flex h-full flex-col print:h-auto print:overflow-visible",
+        className
+      )}
+    >
       <div className="print:hidden">
         <PreviewToolbar
           zoom={zoom}
@@ -120,8 +135,11 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
       </div>
 
       {/* Preview scroll area */}
-      <div ref={scrollRef} className="flex-1 overflow-auto bg-muted/30 print:overflow-visible print:bg-white">
-        <div className="flex flex-col items-center justify-start min-w-full min-h-full p-6 print:p-0 print:block">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-auto bg-muted/30 print:overflow-visible print:bg-white"
+      >
+        <div className="flex min-h-full min-w-full flex-col items-center justify-start p-6 print:block print:p-0">
           {/* Inject preview-specific CSS variables */}
           <style>{previewStyles}</style>
 
@@ -252,15 +270,19 @@ function buildPreviewStyles(
       background-color: ${colors.inlineCodeBackground};
       border-radius: ${codeBlock.borderRadius}px;
       padding: ${codeBlock.padding}px;
-      ${codeBlock.wordWrap ? `
+      ${
+        codeBlock.wordWrap
+          ? `
         white-space: pre-wrap; 
         word-wrap: break-word;
         overflow-wrap: break-word;
         overflow-x: hidden;
-      ` : `
+      `
+          : `
         white-space: pre;
         overflow-x: auto;
-      `}
+      `
+      }
       max-width: 100%;
       ${codeBlock.border && !codeBlock.fileNameLabel ? `border: 1px solid ${colors.inlineCodeTextColor}20;` : ""}
       print-color-adjust: exact;
@@ -459,4 +481,3 @@ function buildPreviewStyles(
     }
   `
 }
-

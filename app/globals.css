@@ -1,3 +1,4 @@
+@import "driver.js/dist/driver.css";
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -224,4 +225,107 @@
   .break-after-page {
     break-after: page;
   }
+}
+
+/* Custom Driver.js Styles to match InkDown Theme */
+.inkdown-tour-popover {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border-radius: var(--radius) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: 20px !important;
+  font-family: var(--font-sans) !important;
+  min-width: 300px !important;
+}
+
+.inkdown-tour-popover .driver-popover-title {
+  font-family: var(--font-sans) !important;
+  font-weight: 700 !important;
+  color: var(--primary) !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 8px !important;
+}
+
+.inkdown-tour-popover .driver-popover-description {
+  font-family: var(--font-sans) !important;
+  color: var(--foreground) !important;
+  line-height: 1.6 !important;
+  font-size: 0.9rem !important;
+}
+
+.inkdown-tour-popover .driver-popover-footer {
+  margin-top: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.inkdown-tour-popover .driver-popover-footer button {
+  background-color: var(--secondary) !important;
+  color: var(--secondary-foreground) !important;
+  border: 1px solid var(--border) !important;
+  text-shadow: none !important;
+  font-size: 12px !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s !important;
+}
+
+.inkdown-tour-popover .driver-popover-footer button:hover {
+  background-color: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+}
+
+.inkdown-tour-popover .driver-popover-footer .driver-popover-next-btn {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+.inkdown-tour-popover .driver-popover-footer .driver-popover-next-btn:hover {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  filter: brightness(1.1) !important;
+}
+
+.inkdown-tour-popover .driver-popover-progress-text {
+  color: var(--muted-foreground) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+}
+
+.inkdown-tour-popover .driver-popover-close-btn {
+  color: var(--muted-foreground) !important;
+  transition: color 0.2s !important;
+}
+
+.inkdown-tour-popover .driver-popover-close-btn:hover {
+  color: var(--foreground) !important;
+}
+
+.inkdown-tour-popover .driver-popover-arrow {
+  border: 6px solid transparent !important;
+}
+
+.inkdown-tour-popover[data-side="top"] .driver-popover-arrow {
+  border-top-color: var(--background) !important;
+}
+
+.inkdown-tour-popover[data-side="bottom"] .driver-popover-arrow {
+  border-bottom-color: var(--background) !important;
+}
+
+.inkdown-tour-popover[data-side="left"] .driver-popover-arrow {
+  border-left-color: var(--background) !important;
+}
+
+.inkdown-tour-popover[data-side="right"] .driver-popover-arrow {
+  border-right-color: var(--background) !important;
+}
+
+/* Also handle the centered ones (no side) */
+.inkdown-tour-popover:not([data-side]) .driver-popover-arrow {
+  display: none !important;
 }
