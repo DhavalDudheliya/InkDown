@@ -112,8 +112,18 @@ function remarkDocumentStructure(options?: DocumentStructureSettings) {
         children: [{ type: "text", value: toc.title }],
       }
 
+      // Wrap TOC in a div container for page breaking
+      const tocContainer: any = {
+        type: "div",
+        data: {
+          hName: "div",
+          hProperties: { className: ["toc-container", "break-after-page"] },
+        },
+        children: [tocTitleNode, tocList],
+      }
+
       // Prepend TOC title and list
-      tree.children.unshift(tocTitleNode, tocList)
+      tree.children.unshift(tocContainer)
     }
   }
 }

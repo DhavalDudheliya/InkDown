@@ -12,6 +12,7 @@ import {
   Undo2,
   Redo2,
 } from "lucide-react"
+import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 
 import { cn } from "@/lib/utils"
@@ -89,6 +90,11 @@ function NavIconButton({
 
 export function Navbar({ className }: NavbarProps) {
   const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   const undoStack = useDocumentStore((s) => s.undoStack)
   const redoStack = useDocumentStore((s) => s.redoStack)
   const undo = useDocumentStore((s) => s.undo)
@@ -178,10 +184,10 @@ export function Navbar({ className }: NavbarProps) {
           }
           tooltip="Toggle Dark Mode"
         >
-          {resolvedTheme === "dark" ? (
-            <Sun className="h-4 w-4" />
-          ) : (
+          {!mounted || resolvedTheme !== "dark" ? (
             <Moon className="h-4 w-4" />
+          ) : (
+            <Sun className="h-4 w-4" />
           )}
         </NavIconButton>
 
