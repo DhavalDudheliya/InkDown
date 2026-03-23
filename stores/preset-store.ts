@@ -22,7 +22,7 @@ interface PresetActions {
 
 export const usePresetStore = create<PresetState & PresetActions>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       savedPresets: [],
 
       savePreset: (name, settings) => {
@@ -54,8 +54,8 @@ export const usePresetStore = create<PresetState & PresetActions>()(
             createdAt: Date.now(),
             settings: parsed.settings,
           }
-           set((state) => ({ savedPresets: [...state.savedPresets, preset] }))
-           return preset
+          set((state) => ({ savedPresets: [...state.savedPresets, preset] }))
+          return preset
         } catch {
           return null
         }

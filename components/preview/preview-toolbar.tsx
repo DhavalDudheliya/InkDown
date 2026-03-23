@@ -1,6 +1,6 @@
 "use client"
 
-import { ZoomIn, ZoomOut, Maximize2, ChevronLeft, ChevronRight } from "lucide-react"
+import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import {
