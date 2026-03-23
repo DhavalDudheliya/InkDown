@@ -17,7 +17,14 @@ export function GithubStarButton() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    // Avoid synchronous setState in effect to prevent cascading renders
+    const frame = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(frame)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
     // Fetch star count from GitHub API
     fetch("https://api.github.com/repos/DhavalDudheliya/InkDown")
       .then((res) => res.json())
@@ -27,7 +34,7 @@ export function GithubStarButton() {
         }
       })
       .catch((err) => console.error("Error fetching GitHub stars:", err))
-  }, [])
+  }, [mounted])
 
   const formatStars = (count: number) => {
     if (count >= 1000) {
@@ -37,7 +44,10 @@ export function GithubStarButton() {
   }
 
   // Determine which icon to use
-  const iconSrc = mounted && resolvedTheme === "dark" ? "/github_dark.svg" : "/github_light.svg"
+  const iconSrc =
+    mounted && resolvedTheme === "dark"
+      ? "/github_dark.svg"
+      : "/github_light.svg"
 
   return (
     <Tooltip>
@@ -49,7 +59,7 @@ export function GithubStarButton() {
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "group flex h-6 items-center gap-2 rounded-full border border-primary/50 bg-primary/5 px-3 text-[13px] font-semibold shadow-xs transition-all cursor-pointer"
+              "group flex h-6 cursor-pointer items-center gap-2 rounded-full border border-primary/50 bg-primary/5 px-3 text-[13px] font-semibold shadow-xs transition-all"
             )}
           >
             <div className="relative h-4 w-4">
@@ -69,11 +79,7 @@ export function GithubStarButton() {
           </a>
         )}
       />
-      <TooltipContent
-        side="top"
-        sideOffset={8}
-        className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-900 shadow-md dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
-      >
+      <TooltipContent side="top" sideOffset={8}>
         {stars !== null ? `${stars.toLocaleString()} stars` : "Star on GitHub"}
       </TooltipContent>
     </Tooltip>
