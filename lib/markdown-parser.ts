@@ -21,6 +21,7 @@ import type {
 import GithubSlugger from "github-slugger"
 
 import { highlightCode } from "./shiki-highlighter"
+import type { CodeBlockConfig } from "@/types/code-block"
 import type {
   DocumentStructureSettings,
   SpecialContentSettings,
@@ -35,7 +36,7 @@ import type {
  */
 export async function parseMarkdown(
   content: string,
-  codeBlockConfig?: { theme?: string; [key: string]: unknown },
+  codeBlockConfig?: Partial<CodeBlockConfig>,
   docStruct?: DocumentStructureSettings,
   specialContent?: SpecialContentSettings
 ): Promise<string> {
@@ -50,11 +51,8 @@ export async function parseMarkdown(
     .use(rehypeSlug)
     .use(rehypeKatex)
     .use(rehypeShiki, {
-      theme: (codeBlockConfig?.theme as string) || "catppuccin-mocha",
-      codeBlock: codeBlockConfig as {
-        lineNumbers?: boolean
-        fileNameLabel?: boolean
-      },
+      theme: codeBlockConfig?.theme || "catppuccin-mocha",
+      codeBlock: codeBlockConfig,
     })
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(content)
