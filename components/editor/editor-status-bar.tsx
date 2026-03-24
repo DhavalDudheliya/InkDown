@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { useDocumentStore } from "@/stores"
-import { Cloud, CloudFog, CloudLightning, Loader2 } from "lucide-react"
+import { Cloud, Loader2 } from "lucide-react"
 import type { EditorStats } from "./markdown-editor"
 
 interface EditorStatusBarProps {

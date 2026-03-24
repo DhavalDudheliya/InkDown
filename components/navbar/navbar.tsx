@@ -13,7 +13,7 @@ import {
   Redo2,
   HelpCircle,
 } from "lucide-react"
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
+import { useCallback, useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
 
 import { cn } from "@/lib/utils"

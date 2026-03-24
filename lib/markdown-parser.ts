@@ -9,11 +9,23 @@ import rehypeStringify from "rehype-stringify"
 import rehypeParse from "rehype-parse"
 import { visit } from "unist-util-visit"
 import type { Root, Element } from "hast"
-import type { Root as MdastRoot, Heading, Text, List, ListItem, Paragraph, PhrasingContent, Blockquote } from "mdast"
+import type {
+  Root as MdastRoot,
+  Heading,
+  List,
+  ListItem,
+  Paragraph,
+  PhrasingContent,
+  Blockquote,
+} from "mdast"
 import GithubSlugger from "github-slugger"
 
 import { highlightCode } from "./shiki-highlighter"
-import type { DocumentStructureSettings, SpecialContentSettings } from "@/types/style"
+import type { CodeBlockConfig } from "@/types/code-block"
+import type {
+  DocumentStructureSettings,
+  SpecialContentSettings,
+} from "@/types/style"
 
 /**
  * Parse Markdown content into styled HTML.
@@ -24,7 +36,7 @@ import type { DocumentStructureSettings, SpecialContentSettings } from "@/types/
  */
 export async function parseMarkdown(
   content: string,
-  codeBlockConfig?: any,
+  codeBlockConfig?: Partial<CodeBlockConfig>,
   docStruct?: DocumentStructureSettings,
   specialContent?: SpecialContentSettings
 ): Promise<string> {
@@ -38,7 +50,10 @@ export async function parseMarkdown(
     .use(rehypeImages, specialContent)
     .use(rehypeSlug)
     .use(rehypeKatex)
-    .use(rehypeShiki, { theme: codeBlockConfig?.theme || "catppuccin-mocha", codeBlock: codeBlockConfig })
+    .use(rehypeShiki, {
+      theme: codeBlockConfig?.theme || "catppuccin-mocha",
+      codeBlock: codeBlockConfig,
+    })
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(content)
 
@@ -57,7 +72,12 @@ function remarkDocumentStructure(options?: DocumentStructureSettings) {
     if (!toc.enabled && !sectionNumbering.enabled) return
 
     const slugger = new GithubSlugger()
-    const headings: { depth: number; text: string; id: string; number: string }[] = []
+    const headings: {
+      depth: number
+      text: string
+      id: string
+      number: string
+    }[] = []
     const counters = [0, 0, 0, 0, 0, 0] // Track counters for H1-H6
 
     // 1. Walk the tree to number sections and collect headings for TOC
@@ -71,24 +91,27 @@ function remarkDocumentStructure(options?: DocumentStructureSettings) {
         for (let i = level; i < 6; i++) {
           counters[i] = 0
         }
-        
+
         numberStr = counters.slice(0, level).join(".") + " "
-        
+
         // Inject the number as bold text into the AST
         node.children.unshift(
-          { type: "text", value: " " },
-          { type: "strong", children: [{ type: "text", value: numberStr.trim() }] } as any
+          { type: "text", value: " " } as never,
+          {
+            type: "strong",
+            children: [{ type: "text", value: numberStr.trim() }],
+          } as never
         )
       }
 
       // Extract raw text for TOC and IDs
       const rawText = extractMdastText(node).trim()
-      
+
       // Clean up the text by removing the newly injected number if numbering is enabled,
       // so the slug matches the standard rehype-slug generation.
-      const textWithoutNumber = sectionNumbering.enabled 
-          ? rawText.replace(new RegExp(`^${numberStr.trim()} `), "") 
-          : rawText
+      const textWithoutNumber = sectionNumbering.enabled
+        ? rawText.replace(new RegExp(`^${numberStr.trim()} `), "")
+        : rawText
 
       const id = slugger.slug(textWithoutNumber)
 
@@ -105,7 +128,7 @@ function remarkDocumentStructure(options?: DocumentStructureSettings) {
     // 2. Generate TOC AST and inject at the top
     if (toc.enabled && headings.length > 0) {
       const tocList = buildTocAst(headings)
-      
+
       const tocTitleNode: Heading = {
         type: "heading",
         depth: 2,
@@ -113,6 +136,8 @@ function remarkDocumentStructure(options?: DocumentStructureSettings) {
       }
 
       // Wrap TOC in a div container for page breaking
+      // Using an mdast-compatible object structure that remark-rehype understands
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const tocContainer: any = {
         type: "div",
         data: {
@@ -132,9 +157,16 @@ function remarkDocumentStructure(options?: DocumentStructureSettings) {
  * Builds a flat bulleted list containing links for the Table of Contents.
  * Output resembles standard `<ol>`/`<ul>` structure but we use nested bullet lists for indenting.
  */
-function buildTocAst(headings: { depth: number; text: string; id: string }[]): List {
-  const rootList: List = { type: "list", ordered: false, spread: false, children: [] }
-  
+function buildTocAst(
+  headings: { depth: number; text: string; id: string }[]
+): List {
+  const rootList: List = {
+    type: "list",
+    ordered: false,
+    spread: false,
+    children: [],
+  }
+
   // We'll flatten the TOC using HTML styling or basic indentation
   for (const h of headings) {
     const linkNode: PhrasingContent = {
@@ -149,14 +181,17 @@ function buildTocAst(headings: { depth: number; text: string; id: string }[]): L
       spread: false,
       children: [{ type: "paragraph", children: [linkNode] }],
     }
-    
-    // Simple approach: we just output a flat list and let CSS do the indentation via a custom className, 
-    // or we nest them properly. Proper nesting in mdast is complex. Let's build a flat list where 
+
+    // Simple approach: we just output a flat list and let CSS do the indentation via a custom className,
+    // or we nest them properly. Proper nesting in mdast is complex. Let's build a flat list where
     // each paragraph has some custom HTML classes for padding.
     // Instead of raw HTML, since we want valid mdast, we'll just insert non-breaking spaces for depth.
     if (h.depth > 1) {
       const spaces = " ".repeat((h.depth - 1) * 4)
-      ;(listItem.children[0] as Paragraph).children.unshift({ type: "text", value: spaces })
+      ;(listItem.children[0] as Paragraph).children.unshift({
+        type: "text",
+        value: spaces,
+      })
     }
 
     rootList.children.push(listItem)
@@ -168,12 +203,20 @@ function buildTocAst(headings: { depth: number; text: string; id: string }[]): L
 /**
  * Recursively extract text content from an mdast node.
  */
-function extractMdastText(node: any): string {
+function extractMdastText(node: {
+  type: string
+  value?: string
+  children?: unknown[]
+}): string {
   if (node.type === "text" && "value" in node) {
     return node.value ?? ""
   }
   if ("children" in node && Array.isArray(node.children)) {
-    return node.children.map(extractMdastText).join("")
+    return (
+      node.children as { type: string; value?: string; children?: unknown[] }[]
+    )
+      .map(extractMdastText)
+      .join("")
   }
   return ""
 }
@@ -181,32 +224,47 @@ function extractMdastText(node: any): string {
 /**
  * Custom rehype plugin that runs Shiki on `<pre><code>` blocks.
  */
-function rehypeShiki(options: { theme: string; codeBlock?: any }) {
+function rehypeShiki(options: {
+  theme: string
+  codeBlock?: { lineNumbers?: boolean; fileNameLabel?: boolean }
+}) {
   return async function (tree: Root) {
-    const nodesToProcess: { node: Element; codeNode: Element; parent: Element; index: number }[] =
-      []
+    const nodesToProcess: {
+      node: Element
+      codeNode: Element
+      parent: Element
+      index: number
+    }[] = []
 
     // Collect all <pre><code> nodes
-    visit(tree, "element", (node: Element, index: number | undefined, parent: Element | Root | undefined) => {
-      if (
-        node.tagName === "pre" &&
-        node.children.length === 1 &&
-        node.children[0].type === "element" &&
-        node.children[0].tagName === "code"
-      ) {
-        if (parent && typeof index === "number") {
-          nodesToProcess.push({
-            node, // The <pre> element
-            codeNode: node.children[0] as Element, // The <code> element
-            parent: parent as Element,
-            index,
-          })
+    visit(
+      tree,
+      "element",
+      (
+        node: Element,
+        index: number | undefined,
+        parent: Element | Root | undefined
+      ) => {
+        if (
+          node.tagName === "pre" &&
+          node.children.length === 1 &&
+          node.children[0].type === "element" &&
+          node.children[0].tagName === "code"
+        ) {
+          if (parent && typeof index === "number") {
+            nodesToProcess.push({
+              node, // The <pre> element
+              codeNode: node.children[0] as Element, // The <code> element
+              parent: parent as Element,
+              index,
+            })
+          }
         }
       }
-    })
+    )
 
     // Process each code block with Shiki
-    for (const { node, codeNode, parent, index } of nodesToProcess) {
+    for (const { codeNode, parent, index } of nodesToProcess) {
       // Extract language from className (e.g. "language-typescript")
       const className = (codeNode.properties?.className as string[]) ?? []
       const langClass = className.find((c) =>
@@ -216,9 +274,18 @@ function rehypeShiki(options: { theme: string; codeBlock?: any }) {
 
       // Let client-side Mermaid handle mermaid blocks
       if (lang === "mermaid") {
-        if (!parent.properties) parent.properties = {}
-        const parentClassInfo = (parent.properties.className as string[]) || []
-        parent.properties.className = [...parentClassInfo, "mermaid"]
+        const code = extractText(codeNode)
+        const mermaidDiv: Element = {
+          type: "element",
+          tagName: "div",
+          properties: {
+            className: ["mermaid"],
+            style:
+              "display: flex; justify-content: center; margin: 12px 0; overflow: hidden;",
+          },
+          children: [{ type: "text", value: code }],
+        }
+        parent.children[index] = mermaidDiv as never
         continue
       }
 
@@ -236,20 +303,24 @@ function rehypeShiki(options: { theme: string; codeBlock?: any }) {
         // The parsed tree is a Root containing the <pre> element
         if (parsed.children.length > 0) {
           const preElement = parsed.children[0] as Element
-          
+
           if (options.codeBlock) {
             // Setup parent container if we need decorations like filename label
             const container: Element = {
               type: "element",
               tagName: "div",
               properties: { className: ["code-block-container"] },
-              children: []
+              children: [],
             }
-            
+
             // Add Line Numbers class to <pre>
             if (options.codeBlock.lineNumbers && preElement.properties) {
-              const preClasses = (preElement.properties.className as string[]) || [];
-              preElement.properties.className = [...preClasses, "has-line-numbers"];
+              const preClasses =
+                (preElement.properties.className as string[]) || []
+              preElement.properties.className = [
+                ...preClasses,
+                "has-line-numbers",
+              ]
             }
 
             // File Name Label
@@ -259,16 +330,18 @@ function rehypeShiki(options: { theme: string; codeBlock?: any }) {
                 tagName: "div",
                 properties: { className: ["code-block-header"] },
                 children: [
-                  { type: "text", value: lang === "text" ? "code" : lang }
-                ]
+                  { type: "text", value: lang === "text" ? "code" : lang },
+                ],
               }
               // Adjust <pre> border-radius if header is present
               if (preElement.properties) {
-                preElement.properties.style = (preElement.properties.style || "") + " border-top-left-radius: 0; border-top-right-radius: 0; margin-top: 0;";
+                preElement.properties.style =
+                  (preElement.properties.style || "") +
+                  " border-top-left-radius: 0; border-top-right-radius: 0; margin-top: 0;"
               }
               container.children.push(header)
             }
-            
+
             container.children.push(preElement)
             parent.children[index] = container as never
           } else {
@@ -314,8 +387,10 @@ function remarkCallouts(options?: SpecialContentSettings) {
         const p = node.children[0]
         if (p.children.length > 0 && p.children[0].type === "text") {
           const textNode = p.children[0]
-          const match = textNode.value.match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*(.*)/i)
-          
+          const match = textNode.value.match(
+            /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*(.*)/i
+          )
+
           if (match) {
             const type = match[1].toLowerCase()
             const remainingText = match[2]
@@ -329,6 +404,7 @@ function remarkCallouts(options?: SpecialContentSettings) {
 
             // Convert blockquote to html div
             // Injecting custom hast data so remark-rehype converts it to a div
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ;(node as any).data = {
               hName: "div",
               hProperties: {
@@ -337,7 +413,7 @@ function remarkCallouts(options?: SpecialContentSettings) {
                 "data-callout": type,
               },
             }
-            
+
             // Inject an icon or title if needed, maybe using standard CSS ::before content
           }
         }
@@ -353,28 +429,43 @@ function rehypeImages(options?: SpecialContentSettings) {
   return function (tree: Root) {
     if (!options) return
 
-    visit(tree, "element", (node: Element, index: number | undefined, parent: Element | Root | undefined) => {
-      if (node.tagName === "img") {
-        const styles = []
-        if (options.images.borderRadius > 0) {
-          styles.push(`border-radius: ${options.images.borderRadius}px`)
-        }
-        if (options.images.shadow) {
-          styles.push("box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)")
-        }
-        
-        // Add styles directly to node
-        if (!node.properties) node.properties = {}
-        const existingStyle = (node.properties.style as string) || ""
-        node.properties.style = `${existingStyle}; ${styles.join(";")}`
+    visit(
+      tree,
+      "element",
+      (
+        node: Element,
+        index: number | undefined,
+        parent: Element | Root | undefined
+      ) => {
+        if (node.tagName === "img") {
+          const styles = []
+          if (options.images.borderRadius > 0) {
+            styles.push(`border-radius: ${options.images.borderRadius}px`)
+          }
+          if (options.images.shadow) {
+            styles.push(
+              "box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+            )
+          }
 
-        // Center alignment requires wrapping or applying to parent paragraph if parent is just a P matching the image
-        if (options.images.centerAlignment && parent && parent.type === "element" && parent.tagName === "p") {
-          if (!parent.properties) parent.properties = {}
-          const pStyle = (parent.properties.style as string) || ""
-          parent.properties.style = `${pStyle}; text-align: center;`
+          // Add styles directly to node
+          if (!node.properties) node.properties = {}
+          const existingStyle = (node.properties.style as string) || ""
+          node.properties.style = `${existingStyle}; ${styles.join(";")}`
+
+          // Center alignment requires wrapping or applying to parent paragraph if parent is just a P matching the image
+          if (
+            options.images.centerAlignment &&
+            parent &&
+            parent.type === "element" &&
+            parent.tagName === "p"
+          ) {
+            if (!parent.properties) parent.properties = {}
+            const pStyle = (parent.properties.style as string) || ""
+            parent.properties.style = `${pStyle}; text-align: center;`
+          }
         }
       }
-    })
+    )
   }
 }

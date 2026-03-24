@@ -28,7 +28,7 @@ export function PreviewPanel({ className }: PreviewPanelProps) {
 
   const debouncedContent = useDebounce(content, 300)
   const [html, setHtml] = useState("")
-  const [zoom, setZoom] = useState(100)
+  const [zoom, setZoom] = useState(sidebarOpen ? 75 : 100)
   const [prevSidebarOpen, setPrevSidebarOpen] = useState(sidebarOpen)
   const scrollRef = useRef<HTMLDivElement>(null)
 

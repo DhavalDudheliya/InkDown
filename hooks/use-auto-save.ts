@@ -4,7 +4,6 @@ import { useDocumentStore } from "@/stores"
 
 const AUTO_SAVE_KEY = "inkdown_autosave"
 const AUTO_SAVE_FILENAME_KEY = "inkdown_autosave_filename"
-const AUTO_SAVE_INTERVAL = 5000 // 5 seconds
 
 export function useAutoSave() {
   const content = useDocumentStore((s) => s.content)

@@ -1,17 +1,9 @@
 "use client"
 
-import {
-  Undo2,
-  Redo2,
-  Columns2,
-  PanelLeft,
-  PanelRight,
-  Focus,
-} from "lucide-react"
+import { Columns2, PanelLeft, PanelRight, Focus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { useDocumentStore, useEditorStore } from "@/stores"
-import { Button } from "@/components/ui/button"
+import { useEditorStore } from "@/stores"
 import {
   Tooltip,
   TooltipContent,
@@ -47,10 +39,6 @@ const VIEW_MODE_ITEMS: {
 ]
 
 export function EditorToolbar({ className }: EditorToolbarProps) {
-  const undoStack = useDocumentStore((s) => s.undoStack)
-  const redoStack = useDocumentStore((s) => s.redoStack)
-  const undo = useDocumentStore((s) => s.undo)
-  const redo = useDocumentStore((s) => s.redo)
   const viewMode = useEditorStore((s) => s.viewMode)
   const setViewMode = useEditorStore((s) => s.setViewMode)
   const focusMode = useEditorStore((s) => s.focusMode)
