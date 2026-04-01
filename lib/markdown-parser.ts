@@ -272,20 +272,42 @@ function rehypeShiki(options: {
       )
       const lang = langClass ? langClass.replace("language-", "") : "text"
 
-      // Let client-side Mermaid handle mermaid blocks
+      // Pre-render Mermaid diagrams to SVG
       if (lang === "mermaid") {
-        const code = extractText(codeNode)
-        const mermaidDiv: Element = {
-          type: "element",
-          tagName: "div",
-          properties: {
-            className: ["mermaid"],
-            style:
-              "display: flex; justify-content: center; margin: 12px 0; overflow: hidden;",
-          },
-          children: [{ type: "text", value: code }],
+        const code = extractText(codeNode).trim()
+
+        // Skip empty mermaid blocks — nothing to render
+        if (!code) continue
+
+        try {
+          const mermaidModule = await import("mermaid")
+          const mermaidInstance = mermaidModule.default
+          mermaidInstance.initialize({ startOnLoad: false, theme: "default" })
+
+          // Generate a unique ID for each diagram to avoid collisions
+          const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+          const { svg } = await mermaidInstance.render(diagramId, code)
+
+          // Parse the SVG string back into HAST so it integrates cleanly
+          const parsedSvg = unified()
+            .use(rehypeParse, { fragment: true })
+            .parse(svg) as Root
+
+          const mermaidDiv: Element = {
+            type: "element",
+            tagName: "div",
+            properties: {
+              className: ["mermaid-rendered"],
+              style:
+                "display: flex; justify-content: center; margin: 12px 0; overflow: hidden;",
+            },
+            children: parsedSvg.children as Element[],
+          }
+          parent.children[index] = mermaidDiv as never
+        } catch {
+          // On render failure, keep original <pre><code> block as-is (no red error box)
+          // This silently handles partially-typed diagrams during live editing
         }
-        parent.children[index] = mermaidDiv as never
         continue
       }
 

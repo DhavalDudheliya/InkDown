@@ -1,11 +1,19 @@
 "use client"
 
-import { forwardRef, useEffect } from "react"
-import mermaid from "mermaid"
+import { forwardRef } from "react"
 
 import { cn } from "@/lib/utils"
-import type { HeaderFooterSettings, HeaderFooterConfig, HeaderFooterSlotContent, DocumentStructureSettings } from "@/types/style"
-import { FIXED_PAGE_WIDTH, FIXED_PAGE_HEIGHT, FIXED_MARGINS } from "@/constants/page-sizes"
+import type {
+  HeaderFooterSettings,
+  HeaderFooterConfig,
+  HeaderFooterSlotContent,
+  DocumentStructureSettings,
+} from "@/types/style"
+import {
+  FIXED_PAGE_WIDTH,
+  FIXED_PAGE_HEIGHT,
+  FIXED_MARGINS,
+} from "@/constants/page-sizes"
 
 interface PreviewPageProps {
   html: string
@@ -23,14 +31,14 @@ interface PreviewPageProps {
  */
 export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
   function PreviewPage(
-    { 
-      html, 
-      headerFooter, 
-      documentStructure, 
-      zoom, 
-      pageNumber = 1, 
-      totalPages = 1, 
-      className 
+    {
+      html,
+      headerFooter,
+      documentStructure,
+      zoom,
+      pageNumber = 1,
+      totalPages = 1,
+      className,
     },
     ref
   ) {
@@ -41,18 +49,24 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
 
     const scale = zoom / 100
 
-    useEffect(() => {
-      mermaid.initialize({ startOnLoad: false, theme: "default" })
-      mermaid.run({
-        querySelector: ".mermaid",
-        suppressErrors: true,
-      }).catch(console.error)
-    }, [html])
-
-    const formatPageNumber = (num: number, format: HeaderFooterSettings["pageNumberFormat"]) => {
+    const formatPageNumber = (
+      num: number,
+      format: HeaderFooterSettings["pageNumberFormat"]
+    ) => {
       if (format === "roman") {
         // Very basic roman numeral conversion for typical page numbers
-        const roman = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"]
+        const roman = [
+          "i",
+          "ii",
+          "iii",
+          "iv",
+          "v",
+          "vi",
+          "vii",
+          "viii",
+          "ix",
+          "x",
+        ]
         return roman[num - 1] || num.toString()
       }
       if (format === "alphabetical") {
@@ -72,12 +86,26 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
         case "date":
           return <span>{new Date().toLocaleDateString()}</span>
         case "pageNumber":
-          return <span>{formatPageNumber(pageNumber, headerFooter.pageNumberFormat)}</span>
+          return (
+            <span>
+              {formatPageNumber(pageNumber, headerFooter.pageNumberFormat)}
+            </span>
+          )
         case "totalPages":
-          return <span>Page {pageNumber} of {totalPages}</span>
+          return (
+            <span>
+              Page {pageNumber} of {totalPages}
+            </span>
+          )
         case "logo":
           // eslint-disable-next-line @next/next/no-img-element
-          return <img src={slot.src || "https://placehold.co/100x40"} alt="Logo" className="h-6 object-contain" />
+          return (
+            <img
+              src={slot.src || "https://placehold.co/100x40"}
+              alt="Logo"
+              className="h-6 object-contain"
+            />
+          )
         default:
           return null
       }
@@ -91,9 +119,9 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
       paddingRight: number
     ) => {
       if (!config.showOnFirstPage && pageNumber === 1) return null
-      
+
       const isHeader = position === "header"
-      
+
       return (
         <div
           className={cn(
@@ -105,7 +133,10 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
             left: paddingLeft,
             right: paddingRight,
             // Position halfway into the margin
-            [isHeader ? "top" : "bottom"]: Math.max((marginMm * MM_TO_PX) / 2 - 10, 0),
+            [isHeader ? "top" : "bottom"]: Math.max(
+              (marginMm * MM_TO_PX) / 2 - 10,
+              0
+            ),
             ...(config.dividerEnabled && {
               borderColor: config.dividerColor,
               borderWidth: `${config.dividerThickness}px`,
@@ -113,8 +144,12 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
           }}
         >
           <div className="flex-1 text-left">{renderSlot(config.left)}</div>
-          <div className="flex-1 text-center justify-center flex">{renderSlot(config.center)}</div>
-          <div className="flex-1 text-right flex justify-end">{renderSlot(config.right)}</div>
+          <div className="flex flex-1 justify-center text-center">
+            {renderSlot(config.center)}
+          </div>
+          <div className="flex flex-1 justify-end text-right">
+            {renderSlot(config.right)}
+          </div>
         </div>
       )
     }
@@ -143,46 +178,52 @@ export const PreviewPage = forwardRef<HTMLDivElement, PreviewPageProps>(
         >
           {/* Header */}
           {renderHeaderFooter(
-            headerFooter.header, 
-            "header", 
-            FIXED_MARGINS.top, 
-            paddingXSettings, 
+            headerFooter.header,
+            "header",
+            FIXED_MARGINS.top,
+            paddingXSettings,
             paddingRightSettings
           )}
 
           {/* Rendered HTML content with conditional Cover Page */}
-          <div
-            className="preview-content h-full text-black"
-          >
+          <div className="preview-content h-full text-black">
             {documentStructure.coverPage.enabled && (
-              <div 
-                className="flex flex-col items-center justify-center text-center w-full mb-16 break-after-page"
+              <div
+                className="mb-16 flex w-full break-after-page flex-col items-center justify-center text-center"
                 style={{ minHeight: heightPx * 0.7 }}
               >
                 {documentStructure.coverPage.title && (
-                  <h1 className="text-5xl font-bold mb-4">{documentStructure.coverPage.title}</h1>
+                  <h1 className="mb-4 text-5xl font-bold">
+                    {documentStructure.coverPage.title}
+                  </h1>
                 )}
                 {documentStructure.coverPage.subtitle && (
-                  <p className="text-2xl text-muted-foreground mb-12">{documentStructure.coverPage.subtitle}</p>
+                  <p className="mb-12 text-2xl text-muted-foreground">
+                    {documentStructure.coverPage.subtitle}
+                  </p>
                 )}
                 {documentStructure.coverPage.author && (
-                  <p className="text-xl font-medium mt-auto">{documentStructure.coverPage.author}</p>
+                  <p className="mt-auto text-xl font-medium">
+                    {documentStructure.coverPage.author}
+                  </p>
                 )}
                 {documentStructure.coverPage.date && (
-                  <p className="text-lg text-muted-foreground mt-2">{documentStructure.coverPage.date}</p>
+                  <p className="mt-2 text-lg text-muted-foreground">
+                    {documentStructure.coverPage.date}
+                  </p>
                 )}
               </div>
             )}
-            
+
             <div dangerouslySetInnerHTML={{ __html: html }} />
           </div>
 
           {/* Footer */}
           {renderHeaderFooter(
-            headerFooter.footer, 
-            "footer", 
-            FIXED_MARGINS.bottom, 
-            paddingXSettings, 
+            headerFooter.footer,
+            "footer",
+            FIXED_MARGINS.bottom,
+            paddingXSettings,
             paddingRightSettings
           )}
         </div>
