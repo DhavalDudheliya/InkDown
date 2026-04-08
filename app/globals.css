@@ -216,14 +216,62 @@
   body {
     margin: 0 !important;
     padding: 0 !important;
-    background: white !important;
     height: auto !important;
     overflow: visible !important;
+  }
+
+  /* Force light theme variables for print output when in dark mode */
+  html.printing {
+    --background: hsl(33 30% 96%);
+    --foreground: hsl(24 15% 15%);
+    --card: hsl(33 30% 98%);
+    --card-foreground: hsl(24 15% 15%);
+    --popover: hsl(33 30% 98%);
+    --popover-foreground: hsl(24 15% 15%);
+    --primary: hsl(24 75% 45%);
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(33 20% 90%);
+    --secondary-foreground: hsl(24 15% 25%);
+    --muted: hsl(33 15% 92%);
+    --muted-foreground: hsl(24 5% 45%);
+    --accent: hsl(24 80% 94%);
+    --accent-foreground: hsl(24 75% 40%);
+    --border: hsl(33 10% 85%);
+    --input: hsl(33 10% 85%);
+    --ring: hsl(24 75% 45%);
+  }
+
+  html.printing,
+  html.printing body {
+    background: white !important;
   }
 
   /* Handle page breaks for cover pages */
   .break-after-page {
     break-after: page;
+  }
+}
+
+/* Keep dark theme visually on screen even when .printing class is active */
+@media screen {
+  html.dark.printing {
+    --background: hsl(24 10% 10%);
+    --foreground: hsl(33 20% 95%);
+    --card: hsl(24 10% 12%);
+    --card-foreground: hsl(33 20% 95%);
+    --popover: hsl(24 10% 12%);
+    --popover-foreground: hsl(33 20% 95%);
+    --primary: hsl(24 85% 60%);
+    --primary-foreground: hsl(24 10% 10%);
+    --secondary: hsl(24 10% 20%);
+    --secondary-foreground: hsl(33 20% 95%);
+    --muted: hsl(24 10% 18%);
+    --muted-foreground: hsl(33 5% 65%);
+    --accent: hsl(24 50% 18%);
+    --accent-foreground: hsl(24 85% 65%);
+    --border: hsl(24 10% 22%);
+    --input: hsl(24 10% 22%);
+    --ring: hsl(24 85% 60%);
   }
 }
 

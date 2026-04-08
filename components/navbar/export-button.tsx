@@ -27,6 +27,21 @@ export function ExportButton({ className }: ExportButtonProps) {
   const fileName = useDocumentStore((s) => s.fileName)
 
   const handleExportPdf = () => {
+    const htmlEl = document.documentElement
+    const isDark = htmlEl.classList.contains("dark")
+
+    if (isDark) {
+      // Temporarily force light theme for the print output
+      // without visually disrupting the dark UI behind the dialog
+      htmlEl.classList.add("printing")
+
+      const restore = () => {
+        htmlEl.classList.remove("printing")
+        window.removeEventListener("afterprint", restore)
+      }
+      window.addEventListener("afterprint", restore)
+    }
+
     window.print()
   }
 
