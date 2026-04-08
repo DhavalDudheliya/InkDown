@@ -13,6 +13,7 @@ import {
   Redo2,
   HelpCircle,
 } from "lucide-react"
+import Link from "next/link"
 import { useCallback, useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
 
@@ -119,7 +120,9 @@ export function Navbar({ className }: NavbarProps) {
     >
       {/* Left section */}
       <div className="flex items-center gap-2">
-        <Logo size="sm" showText={!focusMode} />
+        <Link href="/">
+          <Logo size="sm" showText={!focusMode} />
+        </Link>
         <div className="mx-1 h-5 w-px bg-border" />
         <FileNameInput />
       </div>

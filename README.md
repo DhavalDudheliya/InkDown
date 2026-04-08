@@ -50,7 +50,7 @@ pnpm install
 # Start the NextJS 16 dev server using Turbopack
 pnpm dev
 ```
-Navigate to `http://localhost:3000/editor` to access the full editor UI.
+Navigate to `http://localhost:3000` to access the full editor UI.
 
 ## Deployment Process
 
