@@ -102,7 +102,7 @@ export function ExportButton({ className }: ExportButtonProps) {
         <Download className="mr-2 h-4 w-4" />
         Export
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuItem onClick={handleExportPdf}>
           <FileText className="mr-2 h-4 w-4" />
           Save as PDF

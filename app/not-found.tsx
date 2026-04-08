@@ -1,7 +1,8 @@
+"use client"
 import Link from "next/link"
-import { ArrowLeft, Home } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 
 export default function NotFound() {
   return (
@@ -25,19 +26,17 @@ export default function NotFound() {
         </p>
       </div>
 
-      <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-        <Button size="lg" className="rounded-full px-8">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-        <Button variant="ghost" size="lg" className="rounded-full px-8">
-          <Link href="/">
-            <Home className="mr-2 h-4 w-4" />
-            Home
-          </Link>
-        </Button>
+      <div className="mt-10">
+        <Link
+          href="/"
+          className={cn(
+            buttonVariants({ variant: "default", size: "lg" }),
+            "rounded-full px-8"
+          )}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Home
+        </Link>
       </div>
 
       {/* Decorative elements */}
