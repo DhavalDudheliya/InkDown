@@ -1,7 +1,14 @@
 // ── Theme Names ──────────────────────────────────────────────
 
 export type ThemeName =
-  "editorial-serif" | "clean-slate" | "forest-notebook" | "rose-gold" | "midnight-ink" | "catppuccin-mocha" | "obsidian-amber" | "nord-aurora"
+  | "editorial-serif"
+  | "clean-slate"
+  | "forest-notebook"
+  | "rose-gold"
+  | "ivory-academic"
+  | "soft-sky"
+  | "warm-paper"
+  | "pastel-notes"
 
 // ── Font Configuration ───────────────────────────────────────
 
